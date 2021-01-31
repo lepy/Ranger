@@ -359,7 +359,7 @@ class RangeMap(object):
             while len(addRanges) > 0:
                 self.put(addRanges.pop(), addItems.pop())
 
-    def whichOverlaps(self, val):
+    def which_overlaps(self, val):
         """ Returns which of the Ranges overlap with a single value or
         Range object
 

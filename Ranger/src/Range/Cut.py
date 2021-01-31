@@ -40,7 +40,7 @@ class Cut(object):
             if not any((aboveAll, belowAll)):
                 raise ValueError("Must specify a type of cut point")
             elif all((aboveAll, belowAll)):
-                raise ValueError("Cannot be both aboveAll and belowAll")
+                raise ValueError("Cannot be both above_all and below_all")
             else:
                 # Correct input
                 self.aboveAll = aboveAll
@@ -92,9 +92,9 @@ class Cut(object):
         if not isinstance(other, Cut):
             return False
         elif self.aboveAll:
-            return other.aboveAll
+            return other.above_all
         elif self.belowAll:
-            return other.belowAll
+            return other.below_all
         elif (self.point is not None) and (other.point is not None):
             return ((self.point == other.point) and (self.below == other.below))
         else:
@@ -123,7 +123,7 @@ class Cut(object):
                 else:
                     return False
         else:
-            return self.isLessThan(other)
+            return self.is_less_than(other)
 
     def __gt__(self, other):
         """ Returns whether cutpoint is greater than a specified value """
@@ -145,7 +145,7 @@ class Cut(object):
                 else:
                     return False
         else:
-            return self.isGreaterThan(other)
+            return self.is_greater_than(other)
 
     def __ge__(self, other):
         return (self.__eq__(other) or self.__gt__(other))
@@ -153,7 +153,7 @@ class Cut(object):
     def __le__(self, other):
         return (self.__eq__(other) or self.__lt__(other))
 
-    def isLessThan(self, val):
+    def is_less_than(self, val):
         """ Returns whether the cutpoint is less than a specified value
 
         Parameters
@@ -182,7 +182,7 @@ class Cut(object):
         else:
             return False
 
-    def isGreaterThan(self, val):
+    def is_greater_than(self, val):
         """ Returns whether the cutpoint is greater than a specified value
 
         Parameters
@@ -212,7 +212,7 @@ class Cut(object):
             return False
 
     @staticmethod
-    def belowValue(val, theType=None):
+    def below_value(val, theType=None):
         """ Create a cut point, where everything below some value is
         included
 
@@ -233,7 +233,7 @@ class Cut(object):
             return Cut(theType, point=val, below=True)
 
     @staticmethod
-    def belowAll(theType):
+    def below_all(theType):
         """ Create a cut point outside the lower end of the domain
 
         Parameters
@@ -248,7 +248,7 @@ class Cut(object):
         return Cut(theType, belowAll=True)
 
     @staticmethod
-    def aboveValue(val, theType=None):
+    def above_value(val, theType=None):
         """ Create a cut point, where everything above some value is
         included
 
@@ -270,7 +270,7 @@ class Cut(object):
             return Cut(theType, point=val, below=False)
 
     @staticmethod
-    def aboveAll(theType):
+    def above_all(theType):
         """ Create a cut point outside the upper end of the domain
 
         Parameters

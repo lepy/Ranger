@@ -5,7 +5,7 @@ class Range(object):
     """
     Class used to represent a range along some 1-D domain. The range
     is represented by 2 cutpoints can can be unbounded by specifying an
-    aboveAll or belowAll Cut.
+    above_all or below_all Cut.
     """
 
     def __init__(self, lowerCut, upperCut):
@@ -35,10 +35,10 @@ class Range(object):
             return_str = '[' if self.is_lower_bound_closed() else '('
         except TypeError:
             return_str = '('
-        return_str += (str(self.lowerCut.point) if not self.lowerCut.belowAll \
+        return_str += (str(self.lowerCut.point) if not self.lowerCut.below_all \
                            else '')
         return_str += ' , '
-        return_str += (str(self.upperCut.point) if not self.upperCut.aboveAll \
+        return_str += (str(self.upperCut.point) if not self.upperCut.above_all \
                            else '')
         try:
             return_str += ']' if self.is_upper_bound_closed() else ')'
@@ -179,7 +179,7 @@ class Range(object):
         -------
         True if the range has a lower endpoint
         """
-        return (not self.lowerCut.belowAll)
+        return (not self.lowerCut.below_all)
 
     def has_upper_bound(self):
         """ Returns True if the range has an upper endpoint (not unbounded
@@ -189,7 +189,7 @@ class Range(object):
         -------
         True if the range has an upper endpoint
         """
-        return (not self.upperCut.aboveAll)
+        return (not self.upperCut.above_all)
 
     def lower_endpoint(self):
         """ Returns the lower endpoint of the range if it exists. Otherwise
@@ -455,8 +455,8 @@ class Range(object):
         # Ensure cutpoints are of compatible, appropriate types
         Range._validate_cutpoints(lower, upper)
         theType = Range._get_type(lower, upper)
-        return Range(Cut.belowValue(lower, theType=theType),
-                     Cut.aboveValue(upper, theType=theType))
+        return Range(Cut.below_value(lower, theType=theType),
+                     Cut.above_value(upper, theType=theType))
 
     @staticmethod
     def closed_open(lower, upper):
@@ -481,8 +481,8 @@ class Range(object):
         # Ensure cutpoints are of compatible, appropriate types
         Range._validate_cutpoints(lower, upper)
         theType = Range._get_type(lower, upper)
-        return Range(Cut.belowValue(lower, theType=theType),
-                     Cut.belowValue(upper, theType=theType))
+        return Range(Cut.below_value(lower, theType=theType),
+                     Cut.below_value(upper, theType=theType))
 
     @staticmethod
     def open_closed(lower, upper):
@@ -507,8 +507,8 @@ class Range(object):
         # Ensure cutpoints are of compatible, appropriate types
         Range._validate_cutpoints(lower, upper)
         theType = Range._get_type(lower, upper)
-        return Range(Cut.aboveValue(lower, theType=theType),
-                     Cut.aboveValue(upper, theType=theType))
+        return Range(Cut.above_value(lower, theType=theType),
+                     Cut.above_value(upper, theType=theType))
 
     @staticmethod
     def open(lower, upper):
@@ -536,8 +536,8 @@ class Range(object):
         theType = Range._get_type(lower, upper)
         if lower == upper:
             raise TypeError("Range of type (v,v) is not valid")
-        return Range(Cut.aboveValue(lower, theType=theType),
-                     Cut.belowValue(upper, theType=theType))
+        return Range(Cut.above_value(lower, theType=theType),
+                     Cut.below_value(upper, theType=theType))
 
     @staticmethod
     def lessThan(val):
@@ -560,8 +560,8 @@ class Range(object):
         """
         Range._validate_cutpoints(val)
         theType = Range._get_type(val)
-        return Range(Cut.belowAll(theType=theType),
-                     Cut.belowValue(val, theType=theType))
+        return Range(Cut.below_all(theType=theType),
+                     Cut.below_value(val, theType=theType))
 
     @staticmethod
     def at_most(val):
@@ -584,8 +584,8 @@ class Range(object):
         """
         Range._validate_cutpoints(val)
         theType = Range._get_type(val)
-        return Range(Cut.belowAll(theType=theType),
-                     Cut.aboveValue(val, theType=theType))
+        return Range(Cut.below_all(theType=theType),
+                     Cut.above_value(val, theType=theType))
 
     @staticmethod
     def greater_than(val):
@@ -608,8 +608,8 @@ class Range(object):
         """
         Range._validate_cutpoints(val)
         theType = Range._get_type(val)
-        return Range(Cut.aboveValue(val, theType=theType),
-                     Cut.aboveAll(theType=theType))
+        return Range(Cut.above_value(val, theType=theType),
+                     Cut.above_all(theType=theType))
 
     @staticmethod
     def at_least(val):
@@ -632,5 +632,5 @@ class Range(object):
         """
         Range._validate_cutpoints(val)
         theType = Range._get_type(val)
-        return Range(Cut.belowValue(val, theType=theType),
-                     Cut.aboveAll(theType=theType))
+        return Range(Cut.below_value(val, theType=theType),
+                     Cut.above_all(theType=theType))

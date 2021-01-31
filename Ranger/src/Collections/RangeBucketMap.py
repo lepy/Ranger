@@ -39,11 +39,11 @@ class RangeBucketMap(RangeMap):
         if start is None:
             start = self.lower_cuts[0]
         else:
-            start = Cut.belowValue(start)
+            start = Cut.below_value(start)
         if end is None:
             end = self.upper_cuts[-1]
         else:
-            end = Cut.aboveValue(end)
+            end = Cut.above_value(end)
         bounding_range = Range(start, end)
         # Get the bounding indices
         ovlapLowerInd = max(bisect_left(self.lower_cuts, start) - 1, 0)

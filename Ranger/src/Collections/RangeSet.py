@@ -447,7 +447,7 @@ class RangeSet(object):
             raise TypeError("otherSet is not a RangeSet")
         return RangeSet(set(self.ranges + otherSet.ranges))
 
-    def whichOverlaps(self, val):
+    def which_overlaps(self, val):
         """ Returns which of the Ranges overlap with a single value or
         Range object
 

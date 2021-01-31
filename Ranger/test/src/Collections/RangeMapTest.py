@@ -93,24 +93,24 @@ class RangeMapTest(unittest.TestCase):
             rangeMap.get(Range.closed(20,30))
         self.assertEquals(rangeMap.get(Range.closed(15,100)),set(['foo']))
     def test_whichOverlaps(self):
-        if debug: print("Testing whichOverlaps")
+        if debug: print("Testing which_overlaps")
         theMap = RangeMap()
         theMap.put(Range.closed(3,5),'foo')
         theMap.put(Range.closed(7,10),'bar')
-        self.assertEqual(theMap.whichOverlaps(4), set([Range.closed(3,5)]))
-        self.assertEqual(theMap.whichOverlaps(Range.closed(0,4)),
+        self.assertEqual(theMap.which_overlaps(4), set([Range.closed(3, 5)]))
+        self.assertEqual(theMap.which_overlaps(Range.closed(0, 4)),
                          set([Range.closed(3,5)]))
-        self.assertEqual(theMap.whichOverlaps(Range.closed(4,5)),
+        self.assertEqual(theMap.which_overlaps(Range.closed(4, 5)),
                          set([Range.closed(3,5)]))
-        self.assertEqual(theMap.whichOverlaps(Range.closed(4,6)),
+        self.assertEqual(theMap.which_overlaps(Range.closed(4, 6)),
                          set([Range.closed(3,5)]))
-        self.assertEqual(theMap.whichOverlaps(Range.closed(6,7)),
+        self.assertEqual(theMap.which_overlaps(Range.closed(6, 7)),
                          set([Range.closed(7,10)]))
-        self.assertEqual(theMap.whichOverlaps(Range.closed(8,11)),
+        self.assertEqual(theMap.which_overlaps(Range.closed(8, 11)),
                          set([Range.closed(7,10)]))
-        self.assertEqual(theMap.whichOverlaps(Range.closed(12,15)),
+        self.assertEqual(theMap.which_overlaps(Range.closed(12, 15)),
                          set([]))
-        self.assertEqual(theMap.whichOverlaps(Range.closed(4,11)),
+        self.assertEqual(theMap.which_overlaps(Range.closed(4, 11)),
                          set([Range.closed(3,5), Range.closed(7,10)]))        
 if __name__ == "__main__":
     debug = True

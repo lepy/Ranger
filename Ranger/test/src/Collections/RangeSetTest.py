@@ -12,8 +12,8 @@ class RangeSetTest(unittest.TestCase):
         theSet = RangeSet()
         # Adding initial part
         theSet.add(Range.closed(3,5))
-        self.assertEqual(theSet.lower_cuts[0], Cut.belowValue(3))
-        self.assertEqual(theSet.upper_cuts[0], Cut.aboveValue(5))
+        self.assertEqual(theSet.lower_cuts[0], Cut.below_value(3))
+        self.assertEqual(theSet.upper_cuts[0], Cut.above_value(5))
         self.assertEqual(len(theSet),1)
         # Adding distinct range above initial one
         theSet.add(Range.closed(7,10))
@@ -24,31 +24,31 @@ class RangeSetTest(unittest.TestCase):
         theSet.add(Range.closed(2,3))
         self.assertEqual(len(theSet),2)
         self.assertEqual(Range.closed(2,5), theSet.ranges[0])
-        self.assertEqual(Cut.belowValue(2), theSet.lower_cuts[0])
-        self.assertEqual(Cut.aboveValue(5), theSet.upper_cuts[0])
+        self.assertEqual(Cut.below_value(2), theSet.lower_cuts[0])
+        self.assertEqual(Cut.above_value(5), theSet.upper_cuts[0])
         self.assertEqual(Range.closed(7,10), theSet.ranges[1])
-        self.assertEqual(Cut.belowValue(7), theSet.lower_cuts[1])
-        self.assertEqual(Cut.aboveValue(10), theSet.upper_cuts[1])
+        self.assertEqual(Cut.below_value(7), theSet.lower_cuts[1])
+        self.assertEqual(Cut.above_value(10), theSet.upper_cuts[1])
         # Adding range above/overlapping second one
         theSet.add(Range.closed(9,11))
         self.assertEqual(len(theSet),2)
         self.assertEqual(Range.closed(7,11), theSet.ranges[1])
-        self.assertEqual(Cut.belowValue(7), theSet.lower_cuts[1])
-        self.assertEqual(Cut.aboveValue(11), theSet.upper_cuts[1])
+        self.assertEqual(Cut.below_value(7), theSet.lower_cuts[1])
+        self.assertEqual(Cut.above_value(11), theSet.upper_cuts[1])
         # Adding range encompasing second one
         theSet.add(Range.closed(6,12))
         self.assertEqual(len(theSet),2)
         self.assertEqual(Range.closed(6,12), theSet.ranges[1])
-        self.assertEqual(Cut.belowValue(6), theSet.lower_cuts[1])
-        self.assertEqual(Cut.aboveValue(12), theSet.upper_cuts[1])
+        self.assertEqual(Cut.below_value(6), theSet.lower_cuts[1])
+        self.assertEqual(Cut.above_value(12), theSet.upper_cuts[1])
         # Adding range encompassing all
         theSet.add(Range.closed(3, 11))
         self.assertEqual(len(theSet),1)
         self.assertEqual(len(theSet.lower_cuts),1)
         self.assertEqual(len(theSet.upper_cuts),1)
         self.assertEqual(Range.closed(2,12), theSet.ranges[0])
-        self.assertEqual(Cut.belowValue(2), theSet.lower_cuts[0])
-        self.assertEqual(Cut.aboveValue(12), theSet.upper_cuts[0])
+        self.assertEqual(Cut.below_value(2), theSet.lower_cuts[0])
+        self.assertEqual(Cut.above_value(12), theSet.upper_cuts[0])
     def test_contains(self):
         if debug: print("Testing contains")
         theSet = RangeSet()
@@ -187,24 +187,24 @@ class RangeSetTest(unittest.TestCase):
             Range.open(3,5)
         ]))
     def test_whichOverlaps(self):
-        if debug: print("Testing whichOverlaps")
+        if debug: print("Testing which_overlaps")
         theSet = RangeSet()
         theSet.add(Range.closed(3,5))
         theSet.add(Range.closed(7,10))
-        self.assertEqual(theSet.whichOverlaps(4), set([Range.closed(3,5)]))
-        self.assertEqual(theSet.whichOverlaps(Range.closed(0,4)),
+        self.assertEqual(theSet.which_overlaps(4), set([Range.closed(3, 5)]))
+        self.assertEqual(theSet.which_overlaps(Range.closed(0, 4)),
                          set([Range.closed(3,5)]))
-        self.assertEqual(theSet.whichOverlaps(Range.closed(4,5)),
+        self.assertEqual(theSet.which_overlaps(Range.closed(4, 5)),
                          set([Range.closed(3,5)]))
-        self.assertEqual(theSet.whichOverlaps(Range.closed(4,6)),
+        self.assertEqual(theSet.which_overlaps(Range.closed(4, 6)),
                          set([Range.closed(3,5)]))
-        self.assertEqual(theSet.whichOverlaps(Range.closed(6,7)),
+        self.assertEqual(theSet.which_overlaps(Range.closed(6, 7)),
                          set([Range.closed(7,10)]))
-        self.assertEqual(theSet.whichOverlaps(Range.closed(8,11)),
+        self.assertEqual(theSet.which_overlaps(Range.closed(8, 11)),
                          set([Range.closed(7,10)]))
-        self.assertEqual(theSet.whichOverlaps(Range.closed(12,15)),
+        self.assertEqual(theSet.which_overlaps(Range.closed(12, 15)),
                          set([]))
-        self.assertEqual(theSet.whichOverlaps(Range.closed(4,11)),
+        self.assertEqual(theSet.which_overlaps(Range.closed(4, 11)),
                          set([Range.closed(3,5), Range.closed(7,10)]))
 if __name__ == "__main__":
     debug = True
