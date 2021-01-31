@@ -78,16 +78,16 @@ class RangeTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             Range.open('b','b')
     def test_lessThan(self):
-        if debug: print("Testing lessThan")
+        if debug: print("Testing less_than")
         # Floats
-        floatRange = Range.lessThan(5.)
+        floatRange = Range.less_than(5.)
         self.assertTrue(floatRange.contains(1.99))
         self.assertTrue(floatRange.contains(2.))
         self.assertTrue(floatRange.contains(3.))
         self.assertFalse(floatRange.contains(5.))
         self.assertFalse(floatRange.contains(5.01))
         # Letters
-        letterRange = Range.lessThan('e')
+        letterRange = Range.less_than('e')
         self.assertTrue(letterRange.contains('a'))
         self.assertTrue(letterRange.contains('b'))
         self.assertTrue(letterRange.contains('c'))

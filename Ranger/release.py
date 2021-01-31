@@ -9,6 +9,7 @@ import datetime
 
 basedir = os.path.abspath(os.path.split(__file__)[0])
 
+
 def write_versionfile():
     """Creates a static file containing version information."""
     versionfile = os.path.join(basedir, 'version.py')
@@ -46,7 +47,7 @@ vcs_info = %(vcs_info)r
     def writefile():
         fh = open(versionfile, 'w')
         subs = {
-            'dev' : dev,
+            'dev': dev,
             'version': version,
             'version_info': version_info,
             'date': date,
@@ -80,6 +81,7 @@ vcs_info = %(vcs_info)r
 
     return version
 
+
 def get_revision():
     """Returns revision and vcs information, dynamically obtained."""
     vcs, revision, tag = None, None, None
@@ -94,6 +96,7 @@ def get_revision():
     vcs_info = (vcs, (revision, tag))
 
     return revision, vcs_info
+
 
 def get_info(dynamic=True):
     ## Date information
@@ -135,52 +138,50 @@ def get_info(dynamic=True):
 
     return date, date_info, version, version_info, vcs_info
 
+
 ## Version information
 name = 'Ranger'
 major = "0"
 minor = "1"
 
-
 ## Declare current release as a development release.
 ## Change to False before tagging a release; then change back.
 dev = True
 
-
 description = "A Python package for the manipulation of range objects"
 
 long_description = \
-"""
-Ranger is a Python package for the manipulation of range objects.
-Ranges may extend over discrete or continuous domains, be open or closed,
-bounded or unbounded. Ranger also includes tools for managing collections
- of ranges, which may be mapped to other objects.
-"""
+    """
+    Ranger is a Python package for the manipulation of range objects.
+    Ranges may extend over discrete or continuous domains, be open or closed,
+    bounded or unbounded. Ranger also includes tools for managing collections
+     of ranges, which may be mapped to other objects.
+    """
 license = 'BSD'
-authors = {'Rodgers-Melnick' : ('Eli Rodgers-Melnick','er432@cornell.edu'),
+authors = {'Rodgers-Melnick': ('Eli Rodgers-Melnick', 'er432@cornell.edu'),
            }
 url = 'https://github.com/er432/Ranger'
-platforms = ['Linux','Mac OSX','Windows','Unix']
-keywords = ['Ranges','Set','Set theory']
+platforms = ['Linux', 'Mac OSX', 'Windows', 'Unix']
+keywords = ['Ranges', 'Set', 'Set theory']
 classifiers = [
-        'Development Status :: 3 - Alpha',
-        'Intended Audience :: Developers',
-        'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'Topic :: Scientific/Engineering :: Bio-Informatics',
-        'Topic :: Scientific/Engineering :: Information Analysis'
-    ]
+    'Development Status :: 3 - Alpha',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.2',
+    'Programming Language :: Python :: 3.3',
+    'Programming Language :: Python :: 3.4',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+    'Topic :: Scientific/Engineering :: Bio-Informatics',
+    'Topic :: Scientific/Engineering :: Information Analysis'
+]
 
 date, date_info, version, version_info, vcs_info = get_info()
 
 if __name__ == '__main__':
     # Write versionfile for nightly snapshots.
     write_versionfile()
-
