@@ -67,7 +67,7 @@ class RangeBucketMap(RangeMap):
             try:
                 # Get intersection of the ranges
                 intersect = bounding_range.intersection(self.ranges[i])
-                if not intersect.isEmpty():
+                if not intersect.is_empty():
                     # If overlapping with this range, put into queue
                     for val in self.items[i]:
                         if val not in vals_inds_dict:
@@ -118,7 +118,7 @@ class RangeBucketMap(RangeMap):
                 try:
                     # Get intersection of the ranges
                     intersect = key.intersection(self.ranges[i])
-                    if not intersect.isEmpty():
+                    if not intersect.is_empty():
                         # If overlapping with this range, put its
                         # item in the return set
                         returnSet = returnSet.union(self.items[i])
@@ -154,7 +154,7 @@ class RangeBucketMap(RangeMap):
             raise TypeError("key is not a Range")
         elif not any((isinstance(val, Hashable), self.recurseAdd)):
             raise TypeError("value not hashable")
-        elif key.isEmpty():
+        elif key.is_empty():
             # Skip if this is an empty range
             return
         # Figure out where to the key/value
@@ -183,7 +183,7 @@ class RangeBucketMap(RangeMap):
                 try:
                     # Get intersection of the ranges
                     intersect = key.intersection(self.ranges[i])
-                    if not intersect.isEmpty():
+                    if not intersect.is_empty():
                         # Add in a Range between the next LowerCut and
                         # the beginning of this intersection if necessary
                         if nextLowerCut < intersect.lowerCut:
@@ -270,7 +270,7 @@ class RangeBucketMap(RangeMap):
         """
         if not isinstance(aRange, Range):
             raise TypeError("aRange is not a Range")
-        elif aRange.isEmpty():
+        elif aRange.is_empty():
             # Skip if this is an empty range
             return
         # Check for compatibility of types if necessary
@@ -299,7 +299,7 @@ class RangeBucketMap(RangeMap):
                 try:
                     # Get intersection of the ranges
                     intersect = aRange.intersection(self.ranges[i])
-                    if not intersect.isEmpty():
+                    if not intersect.is_empty():
                         if intersect == self.ranges[i]:
                             # Mark range for removal
                             removeRanges.append(i)

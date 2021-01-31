@@ -134,7 +134,7 @@ class RangeMap(object):
                 try:
                     # Get intersection of the ranges
                     intersect = key.intersection(self.ranges[i])
-                    if not intersect.isEmpty():
+                    if not intersect.is_empty():
                         # If overlapping with this range, put its
                         # item in the return set
                         returnSet.add(self.items[i])
@@ -174,8 +174,8 @@ class RangeMap(object):
             lower_ind = bisect_left(self.lower_cuts, val.lowerCut) - 1
             upper_ind = bisect_left(self.lower_cuts, val.upperCut)
             for i in range(lower_ind, upper_ind):
-                if val.isConnected(self.ranges[i]):
-                    if not self.ranges[i].intersection(val).isEmpty():
+                if val.is_connected(self.ranges[i]):
+                    if not self.ranges[i].intersection(val).is_empty():
                         return True
             return False
         else:
@@ -201,7 +201,7 @@ class RangeMap(object):
         """
         if not isinstance(key, Range):
             raise TypeError("key is not a Range")
-        elif key.isEmpty():
+        elif key.is_empty():
             # Skip if this is an empty range
             return
         # Figure out where to the key/value
@@ -227,7 +227,7 @@ class RangeMap(object):
                 try:
                     # Get intersection of the ranges
                     intersect = key.intersection(self.ranges[i])
-                    if not intersect.isEmpty():
+                    if not intersect.is_empty():
                         if intersect == self.ranges[i]:
                             # Mark range for removal
                             removeRanges.append(i)
@@ -289,7 +289,7 @@ class RangeMap(object):
         """
         if not isinstance(aRange, Range):
             raise TypeError("aRange is not a Range")
-        elif aRange.isEmpty():
+        elif aRange.is_empty():
             # Skip if this is an empty range
             return
         # Check for compatibility of types if necessary
@@ -318,7 +318,7 @@ class RangeMap(object):
                 try:
                     # Get intersection of the ranges
                     intersect = aRange.intersection(self.ranges[i])
-                    if not intersect.isEmpty():
+                    if not intersect.is_empty():
                         if intersect == self.ranges[i]:
                             # Mark range for removal
                             removeRanges.append(i)
@@ -385,8 +385,8 @@ class RangeMap(object):
             lower_ind = bisect_left(self.lower_cuts, val.lowerCut) - 1
             upper_ind = bisect_left(self.lower_cuts, val.upperCut)
             for i in range(lower_ind, upper_ind):
-                if val.isConnected(self.ranges[i]):
-                    if not self.ranges[i].intersection(val).isEmpty():
+                if val.is_connected(self.ranges[i]):
+                    if not self.ranges[i].intersection(val).is_empty():
                         overlap_set.add(self.ranges[i])
             return overlap_set
         else:

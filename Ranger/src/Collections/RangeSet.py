@@ -74,7 +74,7 @@ class RangeSet(object):
         """
         if not isinstance(aRange, Range):
             raise TypeError("aRange is not a Range")
-        elif aRange.isEmpty():
+        elif aRange.is_empty():
             # Skip if this is an empty range
             return
         # Check for compatibility of types if necessary
@@ -93,7 +93,7 @@ class RangeSet(object):
             self.lower_cuts.append(aRange.lowerCut)
             self.upper_cuts.append(aRange.upperCut)
         elif len(self) == lower_ind:
-            if not aRange.isConnected(self.ranges[max(lower_ind - 1, 0)]):
+            if not aRange.is_connected(self.ranges[max(lower_ind - 1, 0)]):
                 # Add on its own if not connected to previous and last
                 self.ranges.insert(lower_ind, aRange)
                 self.lower_cuts.insert(lower_ind, aRange.lowerCut)
@@ -108,13 +108,13 @@ class RangeSet(object):
                 self.ranges[-1] = newRange
                 self.lower_cuts[-1] = newLowerCut
                 self.upper_cuts[-1] = newUpperCut
-        elif not any((aRange.isConnected(self.ranges[max(lower_ind - 1, 0)]),
-                      aRange.isConnected(self.ranges[lower_ind]))):
+        elif not any((aRange.is_connected(self.ranges[max(lower_ind - 1, 0)]),
+                      aRange.is_connected(self.ranges[lower_ind]))):
             # Add on its own if not connected
             self.ranges.insert(lower_ind, aRange)
             self.lower_cuts.insert(lower_ind, aRange.lowerCut)
             self.upper_cuts.insert(lower_ind, aRange.upperCut)
-        elif aRange.isConnected(self.ranges[max(lower_ind - 1, 0)]):
+        elif aRange.is_connected(self.ranges[max(lower_ind - 1, 0)]):
             # If connected with range below
             newLowerCut = min(self.lower_cuts[max(lower_ind - 1, 0)],
                               aRange.lowerCut)
@@ -127,7 +127,7 @@ class RangeSet(object):
             else:
                 # If not hitting the last range, go find the upper cut
                 for i in range(max(1, lower_ind), len(self)):
-                    if aRange.isConnected(self.ranges[i]):
+                    if aRange.is_connected(self.ranges[i]):
                         newUpperCut = max(newUpperCut, self.upper_cuts[i])
                         removeCount += 1
                     else:
@@ -143,7 +143,7 @@ class RangeSet(object):
             self.ranges.insert(max(lower_ind - 1, 0), newRange)
             self.lower_cuts.insert(max(lower_ind - 1, 0), newRange.lowerCut)
             self.upper_cuts.insert(max(lower_ind - 1, 0), newRange.upperCut)
-        elif aRange.isConnected(self.ranges[lower_ind]):
+        elif aRange.is_connected(self.ranges[lower_ind]):
             # If connected with the range above
             newLowerCut = min(aRange.lowerCut, self.lower_cuts[lower_ind])
             newUpperCut = max(aRange.upperCut, self.upper_cuts[lower_ind])
@@ -154,7 +154,7 @@ class RangeSet(object):
             else:
                 # Go find the upper cut
                 for i in range(lower_ind, len(self)):
-                    if aRange.isConnected(self.ranges[i]):
+                    if aRange.is_connected(self.ranges[i]):
                         newUpperCut = max(newUpperCut, self.upper_cuts[i])
                         removeCount += 1
                     else:
@@ -241,7 +241,7 @@ class RangeSet(object):
                     try:
                         # Get the intersection of the ranges
                         intersect = addRange.intersection(otherSet.ranges[i])
-                        if not intersect.isEmpty():
+                        if not intersect.is_empty():
                             if addRange == intersect:
                                 add = False
                                 break
@@ -307,7 +307,7 @@ class RangeSet(object):
                     try:
                         intersect = addRange.intersection(otherSet.ranges[i])
                         # Add intersection if there is any overlap
-                        if not intersect.isEmpty():
+                        if not intersect.is_empty():
                             newSet.add(intersect)
                     except ValueError:
                         continue
@@ -337,8 +337,8 @@ class RangeSet(object):
             lower_ind = bisect_left(self.lower_cuts, val.lowerCut) - 1
             upper_ind = bisect_left(self.lower_cuts, val.upperCut)
             for i in range(lower_ind, upper_ind):
-                if val.isConnected(self.ranges[i]):
-                    if not self.ranges[i].intersection(val).isEmpty():
+                if val.is_connected(self.ranges[i]):
+                    if not self.ranges[i].intersection(val).is_empty():
                         return True
             return False
         else:
@@ -363,7 +363,7 @@ class RangeSet(object):
         """
         if not isinstance(aRange, Range):
             raise TypeError("aRange is not a Range")
-        elif aRange.isEmpty():
+        elif aRange.is_empty():
             # Skip if this is an empty range
             return
         # Check for compatibility of types if necessary
@@ -389,7 +389,7 @@ class RangeSet(object):
                 try:
                     # Get intersection of the ranges
                     intersect = aRange.intersection(self.ranges[i])
-                    if not intersect.isEmpty():
+                    if not intersect.is_empty():
                         if intersect == self.ranges[i]:
                             # Mark range for removal
                             removeRanges.append(i)
@@ -473,8 +473,8 @@ class RangeSet(object):
             lower_ind = bisect_left(self.lower_cuts, val.lowerCut) - 1
             upper_ind = bisect_left(self.lower_cuts, val.upperCut)
             for i in range(lower_ind, upper_ind):
-                if val.isConnected(self.ranges[i]):
-                    if not self.ranges[i].intersection(val).isEmpty():
+                if val.is_connected(self.ranges[i]):
+                    if not self.ranges[i].intersection(val).is_empty():
                         overlap_set.add(self.ranges[i])
             return overlap_set
         else:

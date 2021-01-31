@@ -32,7 +32,7 @@ class Range(object):
 
     def __repr__(self):
         try:
-            return_str = '[' if self.isLowerBoundClosed() else '('
+            return_str = '[' if self.is_lower_bound_closed() else '('
         except TypeError:
             return_str = '('
         return_str += (str(self.lowerCut.point) if not self.lowerCut.belowAll \
@@ -41,7 +41,7 @@ class Range(object):
         return_str += (str(self.upperCut.point) if not self.upperCut.aboveAll \
                            else '')
         try:
-            return_str += ']' if self.isUpperBoundClosed() else ')'
+            return_str += ']' if self.is_upper_bound_closed() else ')'
         except TypeError:
             return_str += ')'
         return return_str
@@ -79,7 +79,7 @@ class Range(object):
         return (self.lowerCut < val and \
                 self.upperCut > val)
 
-    def containsAll(self, vals):
+    def contains_all(self, vals):
         """ Returns True if the range contains all values in some
         iterable
 
@@ -102,7 +102,7 @@ class Range(object):
                 return False
         return True
 
-    def getDistanceFromPoint(self, val, distFunc=lambda x1, x2: abs(x1 - x2)):
+    def get_distance_from_point(self, val, distFunc=lambda x1, x2: abs(x1 - x2)):
         """ Returns the minimum distance of a Range from a Point, returning 0
         if there is an overlap.
 
@@ -128,7 +128,7 @@ class Range(object):
         The minimum distance between the Range and the Point. Returns 0
         if there is an overlap
         """
-        if not all((self.isLowerBoundClosed(), self.isUpperBoundClosed())):
+        if not all((self.is_lower_bound_closed(), self.is_upper_bound_closed())):
             raise TypeError("Range is not closed")
         if self.contains(val):
             return 0.
@@ -136,7 +136,7 @@ class Range(object):
             return min(distFunc(self.lowerCut.point, val),
                        distFunc(self.upperCut.point, val))
 
-    def getDistanceFromRange(self, other, distFunc=lambda x1, x2: abs(x1 - x2)):
+    def get_distance_from_range(self, other, distFunc=lambda x1, x2: abs(x1 - x2)):
         """ Returns the minimum distance of a Range from another Range, returning
         0 if there is any overlap
 
@@ -162,16 +162,16 @@ class Range(object):
         """
         if not isinstance(other, Range):
             raise TypeError("other is not a Range")
-        if not all((self.isLowerBoundClosed(), self.isUpperBoundClosed(),
-                    other.isLowerBoundClosed(), other.isUpperBoundClosed())):
+        if not all((self.is_lower_bound_closed(), self.is_upper_bound_closed(),
+                    other.is_lower_bound_closed(), other.is_upper_bound_closed())):
             raise TypeError("Not all Ranges closed")
-        if self.isConnected(other):
+        if self.is_connected(other):
             return 0.
         else:
             return min(distFunc(self.lowerCut.point, other.upperCut.point),
                        distFunc(other.lowerCut.point, self.upperCut.point))
 
-    def hasLowerBound(self):
+    def has_lower_bound(self):
         """ Returns True if the range has a lower endpoint (not unbounded
         at the lower end)
 
@@ -181,7 +181,7 @@ class Range(object):
         """
         return (not self.lowerCut.belowAll)
 
-    def hasUpperBound(self):
+    def has_upper_bound(self):
         """ Returns True if the range has an upper endpoint (not unbounded
         at the upper end)
 
@@ -191,7 +191,7 @@ class Range(object):
         """
         return (not self.upperCut.aboveAll)
 
-    def lowerEndpoint(self):
+    def lower_endpoint(self):
         """ Returns the lower endpoint of the range if it exists. Otherwise
         raises a TypeError
 
@@ -209,7 +209,7 @@ class Range(object):
         else:
             return self.lowerCut.point
 
-    def upperEndpoint(self):
+    def upper_endpoint(self):
         """ Returns the upper endpoint of the range if it exists. Otherwise
         raises a TypeError
 
@@ -227,7 +227,7 @@ class Range(object):
         else:
             return self.upperCut.point
 
-    def isLowerBoundClosed(self):
+    def is_lower_bound_closed(self):
         """ Returns whether the lower bound is closed (if there is a
         lower bound)
 
@@ -245,7 +245,7 @@ class Range(object):
         else:
             return self.lowerCut.below
 
-    def isUpperBoundClosed(self):
+    def is_upper_bound_closed(self):
         """ Returns whether the upper bound is closed (if there is an
         upper bound)
 
@@ -263,7 +263,7 @@ class Range(object):
         else:
             return (not self.upperCut.below)
 
-    def isEmpty(self):
+    def is_empty(self):
         """ Returns True if the range is of form [v, v) or (v, v]
 
         Returns
@@ -304,7 +304,7 @@ class Range(object):
         return ((self.lowerCut <= other.lowerCut) and \
                 (self.upperCut >= other.upperCut))
 
-    def isConnected(self, other):
+    def is_connected(self, other):
         """ Returns True if there is a (possibly empty) range that is
         enclosed by both this range and other
 
@@ -459,7 +459,7 @@ class Range(object):
                      Cut.aboveValue(upper, theType=theType))
 
     @staticmethod
-    def closedOpen(lower, upper):
+    def closed_open(lower, upper):
         """ Creates a range including the lower endpoint (i.e. [lower, upper))
 
         Parameters
@@ -485,7 +485,7 @@ class Range(object):
                      Cut.belowValue(upper, theType=theType))
 
     @staticmethod
-    def openClosed(lower, upper):
+    def open_closed(lower, upper):
         """ Creates a range including the upper (i.e. (lower, upper])
 
         Parameters
@@ -564,7 +564,7 @@ class Range(object):
                      Cut.belowValue(val, theType=theType))
 
     @staticmethod
-    def atMost(val):
+    def at_most(val):
         """ Makes range including all values less than or equal to
         some value (i.e. (-inf, val])
 
@@ -588,7 +588,7 @@ class Range(object):
                      Cut.aboveValue(val, theType=theType))
 
     @staticmethod
-    def greaterThan(val):
+    def greater_than(val):
         """ Makes range including all values greater than
         some value (i.e. (val, inf])
 
@@ -612,7 +612,7 @@ class Range(object):
                      Cut.aboveAll(theType=theType))
 
     @staticmethod
-    def atLeast(val):
+    def at_least(val):
         """ Makes range including all values greater than or equal to
         some value (i.e. [val, inf))
 
