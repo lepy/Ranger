@@ -27,18 +27,18 @@ class Range(object):
             raise ValueError("Bounds must be Cut objects")
         elif lowerCut > upperCut:
             raise ValueError("Lower bound cannot be greater than upper bound")
-        self.lowerCut = lowerCut
-        self.upperCut = upperCut
+        self.lower_cut = lowerCut
+        self.upper_cut = upperCut
 
     def __repr__(self):
         try:
             return_str = '[' if self.is_lower_bound_closed() else '('
         except TypeError:
             return_str = '('
-        return_str += (str(self.lowerCut.point) if not self.lowerCut.below_all \
+        return_str += (str(self.lower_cut.point) if not self.lower_cut.below_all \
                            else '')
         return_str += ' , '
-        return_str += (str(self.upperCut.point) if not self.upperCut.above_all \
+        return_str += (str(self.upper_cut.point) if not self.upper_cut.above_all \
                            else '')
         try:
             return_str += ']' if self.is_upper_bound_closed() else ')'
@@ -47,14 +47,14 @@ class Range(object):
         return return_str
 
     def __hash__(self):
-        return (hash(self.lowerCut) * 31 + hash(self.upperCut))
+        return (hash(self.lower_cut) * 31 + hash(self.upper_cut))
 
     def __eq__(self, other):
         if not isinstance(other, Range):
             return False
         else:
-            return ((self.lowerCut == other.lowerCut) and \
-                    (self.upperCut == other.upperCut))
+            return ((self.lower_cut == other.lower_cut) and \
+                    (self.upper_cut == other.upper_cut))
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -76,8 +76,8 @@ class Range(object):
         -------
         True if the range contains the value
         """
-        return (self.lowerCut < val and \
-                self.upperCut > val)
+        return (self.lower_cut < val and \
+                self.upper_cut > val)
 
     def contains_all(self, vals):
         """ Returns True if the range contains all values in some
@@ -133,8 +133,8 @@ class Range(object):
         if self.contains(val):
             return 0.
         else:
-            return min(distFunc(self.lowerCut.point, val),
-                       distFunc(self.upperCut.point, val))
+            return min(distFunc(self.lower_cut.point, val),
+                       distFunc(self.upper_cut.point, val))
 
     def get_distance_from_range(self, other, distFunc=lambda x1, x2: abs(x1 - x2)):
         """ Returns the minimum distance of a Range from another Range, returning
@@ -168,8 +168,8 @@ class Range(object):
         if self.is_connected(other):
             return 0.
         else:
-            return min(distFunc(self.lowerCut.point, other.upperCut.point),
-                       distFunc(other.lowerCut.point, self.upperCut.point))
+            return min(distFunc(self.lower_cut.point, other.upper_cut.point),
+                       distFunc(other.lower_cut.point, self.upper_cut.point))
 
     def has_lower_bound(self):
         """ Returns True if the range has a lower endpoint (not unbounded
@@ -179,7 +179,7 @@ class Range(object):
         -------
         True if the range has a lower endpoint
         """
-        return (not self.lowerCut.below_all)
+        return (not self.lower_cut.below_all)
 
     def has_upper_bound(self):
         """ Returns True if the range has an upper endpoint (not unbounded
@@ -189,7 +189,7 @@ class Range(object):
         -------
         True if the range has an upper endpoint
         """
-        return (not self.upperCut.above_all)
+        return (not self.upper_cut.above_all)
 
     def lower_endpoint(self):
         """ Returns the lower endpoint of the range if it exists. Otherwise
@@ -204,10 +204,10 @@ class Range(object):
         -------
         The lower endpoint of the range
         """
-        if self.lowerCut.point is None:
+        if self.lower_cut.point is None:
             raise TypeError("Range unbounded below")
         else:
-            return self.lowerCut.point
+            return self.lower_cut.point
 
     def upper_endpoint(self):
         """ Returns the upper endpoint of the range if it exists. Otherwise
@@ -222,10 +222,10 @@ class Range(object):
         -------
         The upper endpoint of the range
         """
-        if self.upperCut.point is None:
+        if self.upper_cut.point is None:
             raise TypeError("Range unbounded above")
         else:
-            return self.upperCut.point
+            return self.upper_cut.point
 
     def is_lower_bound_closed(self):
         """ Returns whether the lower bound is closed (if there is a
@@ -240,10 +240,10 @@ class Range(object):
         -------
         True if the lower bound is closed
         """
-        if self.lowerCut.point is None:
+        if self.lower_cut.point is None:
             raise TypeError("Range unbounded below")
         else:
-            return self.lowerCut.below
+            return self.lower_cut.below
 
     def is_upper_bound_closed(self):
         """ Returns whether the upper bound is closed (if there is an
@@ -258,10 +258,10 @@ class Range(object):
         -------
         True if the upper bound is closed
         """
-        if self.upperCut.point is None:
+        if self.upper_cut.point is None:
             raise TypeError("Range unbounded above")
         else:
-            return (not self.upperCut.below)
+            return (not self.upper_cut.below)
 
     def is_empty(self):
         """ Returns True if the range is of form [v, v) or (v, v]
@@ -271,7 +271,7 @@ class Range(object):
 
         True if the range is of the form [v,v) or (v,v]
         """
-        return self.lowerCut == self.upperCut
+        return self.lower_cut == self.upper_cut
 
     def encloses(self, other):
         """ Returns True if the bounds of the other range do not extend
@@ -301,8 +301,8 @@ class Range(object):
         """
         if not isinstance(other, Range):
             raise ValueError("Range required")
-        return ((self.lowerCut <= other.lowerCut) and \
-                (self.upperCut >= other.upperCut))
+        return ((self.lower_cut <= other.lower_cut) and \
+                (self.upper_cut >= other.upper_cut))
 
     def is_connected(self, other):
         """ Returns True if there is a (possibly empty) range that is
@@ -331,8 +331,8 @@ class Range(object):
         """
         if not isinstance(other, Range):
             raise ValueError("Range required")
-        return ((self.lowerCut <= other.upperCut) and \
-                (other.lowerCut <= self.upperCut))
+        return ((self.lower_cut <= other.upper_cut) and \
+                (other.lower_cut <= self.upper_cut))
 
     def intersection(self, other):
         """ Returns the maximal range enclosed by both this range and the
@@ -358,17 +358,17 @@ class Range(object):
         """
         if not isinstance(other, Range):
             raise ValueError("Range required")
-        if ((self.lowerCut >= other.lowerCut) and \
-                (self.upperCut <= other.upperCut)):
-            return Range(self.lowerCut, self.upperCut)
-        elif ((self.lowerCut <= other.lowerCut) and \
-              (self.upperCut >= other.upperCut)):
-            return Range(other.lowerCut, other.upperCut)
+        if ((self.lower_cut >= other.lower_cut) and \
+                (self.upper_cut <= other.upper_cut)):
+            return Range(self.lower_cut, self.upper_cut)
+        elif ((self.lower_cut <= other.lower_cut) and \
+              (self.upper_cut >= other.upper_cut)):
+            return Range(other.lower_cut, other.upper_cut)
         else:
-            newLower = self.lowerCut if (self.lowerCut >= other.lowerCut) else \
-                other.lowerCut
-            newUpper = self.upperCut if (self.upperCut <= other.upperCut) else \
-                other.upperCut
+            newLower = self.lower_cut if (self.lower_cut >= other.lower_cut) else \
+                other.lower_cut
+            newUpper = self.upper_cut if (self.upper_cut <= other.upper_cut) else \
+                other.upper_cut
             return Range(newLower, newUpper)
 
     def span(self, other):
@@ -393,17 +393,17 @@ class Range(object):
         -------
         The minimal range enclosing both with and the other range
         """
-        if ((self.lowerCut <= other.lowerCut) and \
-                (self.upperCut >= other.upperCut)):
-            return Range(self.lowerCut, self.upperCut)
-        elif ((self.lowerCut >= other.lowerCut) and \
-              (self.upperCut <= other.upperCut)):
-            return Range(other.lowerCut, other.upperCut)
+        if ((self.lower_cut <= other.lower_cut) and \
+                (self.upper_cut >= other.upper_cut)):
+            return Range(self.lower_cut, self.upper_cut)
+        elif ((self.lower_cut >= other.lower_cut) and \
+              (self.upper_cut <= other.upper_cut)):
+            return Range(other.lower_cut, other.upper_cut)
         else:
-            newLower = self.lowerCut if (self.lowerCut <= other.lowerCut) else \
-                other.lowerCut
-            newUpper = self.upperCut if (self.upperCut >= other.upperCut) else \
-                other.upperCut
+            newLower = self.lower_cut if (self.lower_cut <= other.lower_cut) else \
+                other.lower_cut
+            newUpper = self.upper_cut if (self.upper_cut >= other.upper_cut) else \
+                other.upper_cut
             return Range(newLower, newUpper)
 
     ##################
@@ -455,8 +455,8 @@ class Range(object):
         # Ensure cutpoints are of compatible, appropriate types
         Range._validate_cutpoints(lower, upper)
         theType = Range._get_type(lower, upper)
-        return Range(Cut.below_value(lower, theType=theType),
-                     Cut.above_value(upper, theType=theType))
+        return Range(Cut.below_value(lower, the_type=theType),
+                     Cut.above_value(upper, the_type=theType))
 
     @staticmethod
     def closed_open(lower, upper):
@@ -481,8 +481,8 @@ class Range(object):
         # Ensure cutpoints are of compatible, appropriate types
         Range._validate_cutpoints(lower, upper)
         theType = Range._get_type(lower, upper)
-        return Range(Cut.below_value(lower, theType=theType),
-                     Cut.below_value(upper, theType=theType))
+        return Range(Cut.below_value(lower, the_type=theType),
+                     Cut.below_value(upper, the_type=theType))
 
     @staticmethod
     def open_closed(lower, upper):
@@ -507,8 +507,8 @@ class Range(object):
         # Ensure cutpoints are of compatible, appropriate types
         Range._validate_cutpoints(lower, upper)
         theType = Range._get_type(lower, upper)
-        return Range(Cut.above_value(lower, theType=theType),
-                     Cut.above_value(upper, theType=theType))
+        return Range(Cut.above_value(lower, the_type=theType),
+                     Cut.above_value(upper, the_type=theType))
 
     @staticmethod
     def open(lower, upper):
@@ -536,8 +536,8 @@ class Range(object):
         theType = Range._get_type(lower, upper)
         if lower == upper:
             raise TypeError("Range of type (v,v) is not valid")
-        return Range(Cut.above_value(lower, theType=theType),
-                     Cut.below_value(upper, theType=theType))
+        return Range(Cut.above_value(lower, the_type=theType),
+                     Cut.below_value(upper, the_type=theType))
 
     @staticmethod
     def lessThan(val):
@@ -560,8 +560,8 @@ class Range(object):
         """
         Range._validate_cutpoints(val)
         theType = Range._get_type(val)
-        return Range(Cut.below_all(theType=theType),
-                     Cut.below_value(val, theType=theType))
+        return Range(Cut.below_all(the_type=theType),
+                     Cut.below_value(val, the_type=theType))
 
     @staticmethod
     def at_most(val):
@@ -584,8 +584,8 @@ class Range(object):
         """
         Range._validate_cutpoints(val)
         theType = Range._get_type(val)
-        return Range(Cut.below_all(theType=theType),
-                     Cut.above_value(val, theType=theType))
+        return Range(Cut.below_all(the_type=theType),
+                     Cut.above_value(val, the_type=theType))
 
     @staticmethod
     def greater_than(val):
@@ -608,8 +608,8 @@ class Range(object):
         """
         Range._validate_cutpoints(val)
         theType = Range._get_type(val)
-        return Range(Cut.above_value(val, theType=theType),
-                     Cut.above_all(theType=theType))
+        return Range(Cut.above_value(val, the_type=theType),
+                     Cut.above_all(the_type=theType))
 
     @staticmethod
     def at_least(val):
@@ -632,5 +632,5 @@ class Range(object):
         """
         Range._validate_cutpoints(val)
         theType = Range._get_type(val)
-        return Range(Cut.below_value(val, theType=theType),
-                     Cut.above_all(theType=theType))
+        return Range(Cut.below_value(val, the_type=theType),
+                     Cut.above_all(the_type=theType))

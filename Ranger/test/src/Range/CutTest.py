@@ -9,8 +9,8 @@ class CutTest(unittest.TestCase):
     def test_isLessThanInt(self):
         if debug: print("Testing is_less_than with integers")
         ptCut = Cut(int, point=2, below=False)
-        belowAllCut = Cut(int, belowAll=True)
-        aboveAllCut = Cut(int, aboveAll = True)
+        belowAllCut = Cut(int, below_all=True)
+        aboveAllCut = Cut(int, above_all= True)
         self.assertTrue(ptCut.is_less_than(3))
         self.assertFalse(ptCut.is_less_than(2))
         self.assertFalse(ptCut.is_less_than(1))
@@ -19,8 +19,8 @@ class CutTest(unittest.TestCase):
     def test_isGreaterThanInt(self):
         if debug: print("Testing is_greater_than with integers")
         ptCut = Cut(int, point=2, below=False)
-        belowAllCut = Cut(int, belowAll=True)
-        aboveAllCut = Cut(int, aboveAll = True)
+        belowAllCut = Cut(int, below_all=True)
+        aboveAllCut = Cut(int, above_all= True)
         self.assertFalse(ptCut.is_greater_than(3))
         self.assertTrue(ptCut.is_greater_than(2))
         self.assertTrue(ptCut.is_greater_than(1))

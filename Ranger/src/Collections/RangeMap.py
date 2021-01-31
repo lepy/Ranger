@@ -97,7 +97,7 @@ class RangeMap(object):
         # Get the index+1 of the highest lower cut <= to the value or its
         # lower cutpoint and check if the value contained
         if isinstance(val, Range):
-            lower_ind = max(bisect_left(self.lower_cuts, val.lowerCut) - 1, 0)
+            lower_ind = max(bisect_left(self.lower_cuts, val.lower_cut) - 1, 0)
             return self.ranges[lower_ind].encloses(val)
         else:
             lower_ind = max(bisect_left(self.lower_cuts, val) - 1, 0)
@@ -128,8 +128,8 @@ class RangeMap(object):
             # If this is a single value
             returnSet = set()
             # Get the bounding indices
-            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lowerCut) - 1, 0)
-            ovlapUpperInd = bisect_left(self.lower_cuts, key.upperCut)
+            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lower_cut) - 1, 0)
+            ovlapUpperInd = bisect_left(self.lower_cuts, key.upper_cut)
             for i in range(ovlapLowerInd, ovlapUpperInd):
                 try:
                     # Get intersection of the ranges
@@ -171,8 +171,8 @@ class RangeMap(object):
         # Get the index+1 of the highest lower cut <= to the value or its
         # lower cutpoint and check if the value overlaps
         if isinstance(val, Range):
-            lower_ind = bisect_left(self.lower_cuts, val.lowerCut) - 1
-            upper_ind = bisect_left(self.lower_cuts, val.upperCut)
+            lower_ind = bisect_left(self.lower_cuts, val.lower_cut) - 1
+            upper_ind = bisect_left(self.lower_cuts, val.upper_cut)
             for i in range(lower_ind, upper_ind):
                 if val.is_connected(self.ranges[i]):
                     if not self.ranges[i].intersection(val).is_empty():
@@ -207,16 +207,16 @@ class RangeMap(object):
         # Figure out where to the key/value
         if not self.overlaps(key):
             # If this range is completely on its own, just insert
-            insertInd = bisect_left(self.lower_cuts, key.lowerCut)
+            insertInd = bisect_left(self.lower_cuts, key.lower_cut)
             self.ranges.insert(insertInd, key)
-            self.lower_cuts.insert(insertInd, key.lowerCut)
-            self.upper_cuts.insert(insertInd, key.upperCut)
+            self.lower_cuts.insert(insertInd, key.lower_cut)
+            self.upper_cuts.insert(insertInd, key.upper_cut)
             self.items.insert(insertInd, val)
             return
         else:
             # If this range has some overlap with existing ranges
-            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lowerCut) - 1, 0)
-            ovlapUpperInd = bisect_left(self.lower_cuts, key.upperCut)
+            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lower_cut) - 1, 0)
+            ovlapUpperInd = bisect_left(self.lower_cuts, key.upper_cut)
             # Create queue or indices marked for removal
             removeRanges = deque()
             # Create queue ranges to add
@@ -231,25 +231,25 @@ class RangeMap(object):
                         if intersect == self.ranges[i]:
                             # Mark range for removal
                             removeRanges.append(i)
-                        elif self.lower_cuts[i] == intersect.lowerCut:
+                        elif self.lower_cuts[i] == intersect.lower_cut:
                             # If equal on left cutpoint, subtract out left
                             # part
-                            self.lower_cuts[i] = intersect.upperCut
-                            self.ranges[i] = Range(intersect.upperCut,
+                            self.lower_cuts[i] = intersect.upper_cut
+                            self.ranges[i] = Range(intersect.upper_cut,
                                                    self.upper_cuts[i])
-                        elif self.upper_cuts[i] == intersect.upperCut:
+                        elif self.upper_cuts[i] == intersect.upper_cut:
                             # If equal on right cutpoint, subtract out
                             # right part
-                            self.upper_cuts[i] = intersect.lowerCut
+                            self.upper_cuts[i] = intersect.lower_cut
                             self.ranges[i] = Range(self.lower_cuts[i],
-                                                   intersect.lowerCut)
+                                                   intersect.lower_cut)
                         else:
                             # If in the middle, split into two parts, putting
                             # both in add queue and placing the old range index
                             # in the remove queue
                             addRanges.append(Range(self.lower_cuts[i],
-                                                   intersect.lowerCut))
-                            addRanges.append(Range(intersect.upperCut,
+                                                   intersect.lower_cut))
+                            addRanges.append(Range(intersect.upper_cut,
                                                    self.upper_cuts[i]))
                             addItems.append(self.items[i])
                             addItems.append(self.items[i])
@@ -294,10 +294,10 @@ class RangeMap(object):
             return
         # Check for compatibility of types if necessary
         if len(self) > 0:
-            if not (issubclass(aRange.lowerCut.theType,
-                               self.ranges[0].lowerCut.theType) or \
-                    issubclass(self.ranges[0].lowerCut.theType,
-                               aRange.lowerCut.theType)):
+            if not (issubclass(aRange.lower_cut.the_type,
+                               self.ranges[0].lower_cut.the_type) or \
+                    issubclass(self.ranges[0].lower_cut.the_type,
+                               aRange.lower_cut.the_type)):
                 raise ValueError("Range not compatible with previously added ranges")
         # Check if the range actually overlaps with the key set
         if not self.overlaps(aRange):
@@ -306,8 +306,8 @@ class RangeMap(object):
             # There's some overlap, so deal with that
             # Determine where overlap occurs
             ovlapLowerInd = max(bisect_left(self.lower_cuts,
-                                            aRange.lowerCut) - 1, 0)
-            ovlapUpperInd = bisect_left(self.lower_cuts, aRange.upperCut)
+                                            aRange.lower_cut) - 1, 0)
+            ovlapUpperInd = bisect_left(self.lower_cuts, aRange.upper_cut)
             # Create queue of indices marked for removal
             removeRanges = deque()
             # Create queue of ranges to add
@@ -322,26 +322,26 @@ class RangeMap(object):
                         if intersect == self.ranges[i]:
                             # Mark range for removal
                             removeRanges.append(i)
-                        elif self.lower_cuts[i] == intersect.lowerCut:
+                        elif self.lower_cuts[i] == intersect.lower_cut:
                             # If equal on the left cutpoint, subtract
                             # out left part
-                            self.lower_cuts[i] = intersect.upperCut
-                            self.ranges[i] = Range(intersect.upperCut,
+                            self.lower_cuts[i] = intersect.upper_cut
+                            self.ranges[i] = Range(intersect.upper_cut,
                                                    self.upper_cuts[i])
-                        elif self.upper_cuts[i] == intersect.upperCut:
+                        elif self.upper_cuts[i] == intersect.upper_cut:
                             # If equal on right cutpoint, subtract out
                             # right part
-                            self.upper_cuts[i] = intersect.lowerCut
+                            self.upper_cuts[i] = intersect.lower_cut
                             self.ranges[i] = Range(self.lower_cuts[i],
-                                                   intersect.lowerCut)
+                                                   intersect.lower_cut)
                         else:
                             # If in the middle, split into two parts, putting
                             # both in add queue and placing the old range index
                             # into the remove queue
                             addRanges.append(Range(self.lower_cuts[i],
-                                                   intersect.lowerCut))
+                                                   intersect.lower_cut))
                             addItems.append(self.items[i])
-                            addRanges.append(Range(intersect.upperCut,
+                            addRanges.append(Range(intersect.upper_cut,
                                                    self.upper_cuts[i]))
                             addItems.append(self.items[i])
                             removeRanges.append(i)
@@ -382,8 +382,8 @@ class RangeMap(object):
         # to set
         overlap_set = set()
         if isinstance(val, Range):
-            lower_ind = bisect_left(self.lower_cuts, val.lowerCut) - 1
-            upper_ind = bisect_left(self.lower_cuts, val.upperCut)
+            lower_ind = bisect_left(self.lower_cuts, val.lower_cut) - 1
+            upper_ind = bisect_left(self.lower_cuts, val.upper_cut)
             for i in range(lower_ind, upper_ind):
                 if val.is_connected(self.ranges[i]):
                     if not self.ranges[i].intersection(val).is_empty():

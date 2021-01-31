@@ -112,8 +112,8 @@ class RangeBucketMap(RangeMap):
             # If this is a single value
             returnSet = set()
             # Get the bounding indices
-            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lowerCut) - 1, 0)
-            ovlapUpperInd = bisect_left(self.lower_cuts, key.upperCut)
+            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lower_cut) - 1, 0)
+            ovlapUpperInd = bisect_left(self.lower_cuts, key.upper_cut)
             for i in range(ovlapLowerInd, ovlapUpperInd):
                 try:
                     # Get intersection of the ranges
@@ -160,10 +160,10 @@ class RangeBucketMap(RangeMap):
         # Figure out where to the key/value
         if not self.overlaps(key):
             # If this range is completely on its own, just insert
-            insertInd = bisect_left(self.lower_cuts, key.lowerCut)
+            insertInd = bisect_left(self.lower_cuts, key.lower_cut)
             self.ranges.insert(insertInd, key)
-            self.lower_cuts.insert(insertInd, key.lowerCut)
-            self.upper_cuts.insert(insertInd, key.upperCut)
+            self.lower_cuts.insert(insertInd, key.lower_cut)
+            self.upper_cuts.insert(insertInd, key.upper_cut)
             if not isinstance(val, set):
                 self.items.insert(insertInd, set([val]))
             else:
@@ -171,14 +171,14 @@ class RangeBucketMap(RangeMap):
             return
         else:
             # If this range has some overlap with existing ranges
-            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lowerCut) - 1, 0)
-            ovlapUpperInd = bisect_left(self.lower_cuts, key.upperCut)
+            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lower_cut) - 1, 0)
+            ovlapUpperInd = bisect_left(self.lower_cuts, key.upper_cut)
             # Create queue ranges to add
             addRanges = deque()
             # Create queue of items to add
             addItems = deque()
             # Keep track of next lower cutpoint to add
-            nextLowerCut = key.lowerCut
+            nextLowerCut = key.lower_cut
             for i in range(ovlapLowerInd, ovlapUpperInd):
                 try:
                     # Get intersection of the ranges
@@ -186,64 +186,64 @@ class RangeBucketMap(RangeMap):
                     if not intersect.is_empty():
                         # Add in a Range between the next LowerCut and
                         # the beginning of this intersection if necessary
-                        if nextLowerCut < intersect.lowerCut:
-                            addRanges.append(Range(nextLowerCut, intersect.lowerCut))
+                        if nextLowerCut < intersect.lower_cut:
+                            addRanges.append(Range(nextLowerCut, intersect.lower_cut))
                             addItems.append(val)
-                            nextLowerCut = intersect.lowerCut
+                            nextLowerCut = intersect.lower_cut
                         if intersect == self.ranges[i]:
                             ## If key encompassing existing Range ##
                             # Add item to this range
                             self.items[i].add(val)
                             # Change the next lower cut
-                            nextLowerCut = intersect.upperCut
-                        elif self.lower_cuts[i] == intersect.lowerCut:
+                            nextLowerCut = intersect.upper_cut
+                        elif self.lower_cuts[i] == intersect.lower_cut:
                             ## If key upper cutpoint enclosed by existing Range ##
                             # Add in the rest of the original Range
-                            if self.upper_cuts[i] > intersect.upperCut:
-                                addRanges.append(Range(intersect.upperCut,
+                            if self.upper_cuts[i] > intersect.upper_cut:
+                                addRanges.append(Range(intersect.upper_cut,
                                                        self.upper_cuts[i]))
                                 addItems.append(set(self.items[i]))
                             # Define original part to be shorter                            
-                            self.upper_cuts[i] = intersect.upperCut
+                            self.upper_cuts[i] = intersect.upper_cut
                             self.ranges[i] = Range(self.lower_cuts[i],
-                                                   intersect.upperCut)
+                                                   intersect.upper_cut)
                             self.items[i].add(val)
                             # Change the next lower cut
-                            nextLowerCut = intersect.upperCut
-                        elif self.upper_cuts[i] == intersect.upperCut:
+                            nextLowerCut = intersect.upper_cut
+                        elif self.upper_cuts[i] == intersect.upper_cut:
                             ## If key lower cutpoint enclosed by existing Range ##
                             # Add in the rest of the original Range
-                            if intersect.lowerCut > self.lower_cuts[i]:
-                                addRanges.append(Range(self.lower_cuts[i], intersect.lowerCut))
+                            if intersect.lower_cut > self.lower_cuts[i]:
+                                addRanges.append(Range(self.lower_cuts[i], intersect.lower_cut))
                                 addItems.append(set(self.items[i]))
                             # Define original part to be shorter
-                            self.lower_cuts[i] = intersect.lowerCut
+                            self.lower_cuts[i] = intersect.lower_cut
                             self.ranges[i] = Range(self.lower_cuts[i],
-                                                   intersect.upperCut)
+                                                   intersect.upper_cut)
                             self.items[i].add(val)
                             # Change the next lower cut
-                            nextLowerCut = intersect.upperCut
+                            nextLowerCut = intersect.upper_cut
                         else:
                             # If entire key enclosed by existing Range
                             # Add in lower part of original Range
-                            addRanges.append(Range(self.lower_cuts[i], intersect.lowerCut))
+                            addRanges.append(Range(self.lower_cuts[i], intersect.lower_cut))
                             addItems.append(set(self.items[i]))
                             # Add in upper part of original Range
-                            addRanges.append(Range(intersect.upperCut, self.upper_cuts[i]))
+                            addRanges.append(Range(intersect.upper_cut, self.upper_cuts[i]))
                             addItems.append(set(self.items[i]))
                             # Define original part to be middle
-                            self.lower_cuts[i] = intersect.lowerCut
-                            self.upper_cuts[i] = intersect.upperCut
-                            self.ranges[i] = Range(intersect.lowerCut, intersect.upperCut)
+                            self.lower_cuts[i] = intersect.lower_cut
+                            self.upper_cuts[i] = intersect.upper_cut
+                            self.ranges[i] = Range(intersect.lower_cut, intersect.upper_cut)
                             self.items[i].add(val)
                             # Change the next lower cut
-                            nextLowerCut = intersect.upperCut
+                            nextLowerCut = intersect.upper_cut
                 except ValueError:
                     # Continue if no overlap with this range
                     continue
             # Put in a last range if necessary
-            if nextLowerCut < key.upperCut:
-                addRanges.append(Range(nextLowerCut, key.upperCut))
+            if nextLowerCut < key.upper_cut:
+                addRanges.append(Range(nextLowerCut, key.upper_cut))
                 addItems.append(val)
             # Use recursive call to place the pairs, which now
             # should not overlap with any other ranges
@@ -275,10 +275,10 @@ class RangeBucketMap(RangeMap):
             return
         # Check for compatibility of types if necessary
         if len(self) > 0:
-            if not (issubclass(aRange.lowerCut.theType,
-                               self.ranges[0].lowerCut.theType) or \
-                    issubclass(self.ranges[0].lowerCut.theType,
-                               aRange.lowerCut.theType)):
+            if not (issubclass(aRange.lower_cut.the_type,
+                               self.ranges[0].lower_cut.the_type) or \
+                    issubclass(self.ranges[0].lower_cut.the_type,
+                               aRange.lower_cut.the_type)):
                 raise ValueError("Range not compatible with previously added ranges")
         # Check if the range actually overlaps with the key set
         if not self.overlaps(aRange):
@@ -287,8 +287,8 @@ class RangeBucketMap(RangeMap):
             # There's some overlap, so deal with that
             # Determine where overlap occurs
             ovlapLowerInd = max(bisect_left(self.lower_cuts,
-                                            aRange.lowerCut) - 1, 0)
-            ovlapUpperInd = bisect_left(self.lower_cuts, aRange.upperCut)
+                                            aRange.lower_cut) - 1, 0)
+            ovlapUpperInd = bisect_left(self.lower_cuts, aRange.upper_cut)
             # Create queue of indices marked for removal
             removeRanges = deque()
             # Create queue of ranges to add
@@ -303,26 +303,26 @@ class RangeBucketMap(RangeMap):
                         if intersect == self.ranges[i]:
                             # Mark range for removal
                             removeRanges.append(i)
-                        elif self.lower_cuts[i] == intersect.lowerCut:
+                        elif self.lower_cuts[i] == intersect.lower_cut:
                             # If equal on the left cutpoint, subtract
                             # out left part
-                            self.lower_cuts[i] = intersect.upperCut
-                            self.ranges[i] = Range(intersect.upperCut,
+                            self.lower_cuts[i] = intersect.upper_cut
+                            self.ranges[i] = Range(intersect.upper_cut,
                                                    self.upper_cuts[i])
-                        elif self.upper_cuts[i] == intersect.upperCut:
+                        elif self.upper_cuts[i] == intersect.upper_cut:
                             # If equal on right cutpoint, subtract out
                             # right part
-                            self.upper_cuts[i] = intersect.lowerCut
+                            self.upper_cuts[i] = intersect.lower_cut
                             self.ranges[i] = Range(self.lower_cuts[i],
-                                                   intersect.lowerCut)
+                                                   intersect.lower_cut)
                         else:
                             # If in the middle, split into two parts, putting
                             # both in add queue and placing the old range index
                             # into the remove queue
                             addRanges.append(Range(self.lower_cuts[i],
-                                                   intersect.lowerCut))
+                                                   intersect.lower_cut))
                             addItems.append(set(self.items[i]))
-                            addRanges.append(Range(intersect.upperCut,
+                            addRanges.append(Range(intersect.upper_cut,
                                                    self.upper_cuts[i]))
                             addItems.append(set(self.items[i]))
                             removeRanges.append(i)
