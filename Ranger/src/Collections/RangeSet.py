@@ -73,7 +73,7 @@ class RangeSet(object):
             If not adding a Range
         """
         if not isinstance(aRange, Range):
-            raise TypeError("aRange is not a Range")
+            raise TypeError("a_range is not a Range")
         elif aRange.is_empty():
             # Skip if this is an empty range
             return
@@ -362,7 +362,7 @@ class RangeSet(object):
             If not a Range 
         """
         if not isinstance(aRange, Range):
-            raise TypeError("aRange is not a Range")
+            raise TypeError("a_range is not a Range")
         elif aRange.is_empty():
             # Skip if this is an empty range
             return
