@@ -2,12 +2,14 @@ from bisect import bisect_left
 from Ranger.src.Range.Range import Range
 from collections import deque
 
+
 class RangeMap(object):
     """ Class used to represent a mapping of disjoint ranges to some objects.
     Ranges do not coalesce. If a new Range is added over an existing Range,
     it overwrites the overlapping part of the existing Range
     """
-    def __init__(self, rangeDict = None):
+
+    def __init__(self, rangeDict=None):
         """ Instantiates a RangeMap
         
         Parameters
@@ -27,41 +29,53 @@ class RangeMap(object):
         if rangeDict is not None:
             for rangeKey, val in rangeDict.iteritems():
                 self.put(rangeKey, val)
+
     def __getitem__(self, key):
         return self.get(key)
+
     def __setitem__(self, key, value):
         self.put(key, value)
+
     def __delitem__(self, key):
         self.remove(key)
+
     def __iter__(self):
         return iter(self.ranges)
+
     def __eq__(self, other):
-        if not isinstance(other, RangeMap): return False
-        elif len(self) != len(other): return False
-        for k1,v1,k2,v2 in zip(self.ranges, self.items,
-                               other.ranges, other.items):
+        if not isinstance(other, RangeMap):
+            return False
+        elif len(self) != len(other):
+            return False
+        for k1, v1, k2, v2 in zip(self.ranges, self.items,
+                                  other.ranges, other.items):
             if (k1 != k2 or v1 != v2):
                 return False
         return True
+
     def __ne__(self, other):
         return not self.__eq__(other)
+
     def __len__(self):
         return len(self.ranges)
+
     def __repr__(self):
         if len(self) < 5:
             returnStr = "{%s}" % ", ".join([
-                "%s : %s" % (k,v) for k,v in zip(self.ranges, self.items)
-                ])
+                "%s : %s" % (k, v) for k, v in zip(self.ranges, self.items)
+            ])
         else:
             returnStr = "{%s, ..., %s}" % (", ".join([
-                "%s : %s" % (k,v) for k,v in zip(self.ranges[:2], self.items[:2])
+                "%s : %s" % (k, v) for k, v in zip(self.ranges[:2], self.items[:2])
             ]), ", ".join([
-                "%s : %s" % (k,v) for k,v in zip(self.ranges[-2:], self.items[-2:])
+                "%s : %s" % (k, v) for k, v in zip(self.ranges[-2:], self.items[-2:])
             ])
-                                           )
+            )
         return returnStr
+
     def __missing__(self, key):
         raise KeyError(str(key))
+
     def contains(self, val):
         """ Returns true if any of the ranges fully enclose the given
         value, which can be a single value or a Range object
@@ -83,11 +97,12 @@ class RangeMap(object):
         # Get the index+1 of the highest lower cut <= to the value or its
         # lower cutpoint and check if the value contained
         if isinstance(val, Range):
-            lower_ind = max(bisect_left(self.lower_cuts, val.lowerCut)-1,0)
+            lower_ind = max(bisect_left(self.lower_cuts, val.lowerCut) - 1, 0)
             return self.ranges[lower_ind].encloses(val)
         else:
-            lower_ind = max(bisect_left(self.lower_cuts, val)-1,0)
+            lower_ind = max(bisect_left(self.lower_cuts, val) - 1, 0)
             return self.ranges[lower_ind].contains(val)
+
     def get(self, key):
         """ Get the item(s) corresponding to a given key. The key can be a
         Range or a single value that is within a Range
@@ -113,7 +128,7 @@ class RangeMap(object):
             # If this is a single value
             returnSet = set()
             # Get the bounding indices
-            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lowerCut)-1,0)
+            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lowerCut) - 1, 0)
             ovlapUpperInd = bisect_left(self.lower_cuts, key.upperCut)
             for i in range(ovlapLowerInd, ovlapUpperInd):
                 try:
@@ -131,10 +146,10 @@ class RangeMap(object):
         else:
             # If this is a single value
             # Get the index of the range containing the value
-            lower_ind = max(bisect_left(self.lower_cuts, key)-1,0)
+            lower_ind = max(bisect_left(self.lower_cuts, key) - 1, 0)
             # Return the item at that value
             return set([self.items[lower_ind]])
-            
+
     def overlaps(self, val):
         """ Returns true if any of the ranges at least partially overlap
         the given value, which can be a single value or a Range object
@@ -156,16 +171,17 @@ class RangeMap(object):
         # Get the index+1 of the highest lower cut <= to the value or its
         # lower cutpoint and check if the value overlaps
         if isinstance(val, Range):
-            lower_ind = bisect_left(self.lower_cuts, val.lowerCut)-1
+            lower_ind = bisect_left(self.lower_cuts, val.lowerCut) - 1
             upper_ind = bisect_left(self.lower_cuts, val.upperCut)
-            for i in range(lower_ind,upper_ind):
+            for i in range(lower_ind, upper_ind):
                 if val.isConnected(self.ranges[i]):
                     if not self.ranges[i].intersection(val).isEmpty():
                         return True
             return False
         else:
-            lower_ind = bisect_left(self.lower_cuts,val)-1
-            return self.ranges[lower_ind].contains(val)        
+            lower_ind = bisect_left(self.lower_cuts, val) - 1
+            return self.ranges[lower_ind].contains(val)
+
     def put(self, key, val):
         """ Creates a mapping from a Range to a value. Note that if the
         key Range overlaps any existing ranges, it will replace those
@@ -199,7 +215,7 @@ class RangeMap(object):
             return
         else:
             # If this range has some overlap with existing ranges
-            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lowerCut)-1,0)
+            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lowerCut) - 1, 0)
             ovlapUpperInd = bisect_left(self.lower_cuts, key.upperCut)
             # Create queue or indices marked for removal
             removeRanges = deque()
@@ -253,7 +269,8 @@ class RangeMap(object):
             # Use recursive call to place the pairs, which now
             # should not overlap with any other ranges
             while len(addRanges) > 0:
-                self.put(addRanges.pop(),addItems.pop())
+                self.put(addRanges.pop(), addItems.pop())
+
     def remove(self, aRange):
         """ Removes a range and its value from the range set
 
@@ -289,7 +306,7 @@ class RangeMap(object):
             # There's some overlap, so deal with that
             # Determine where overlap occurs
             ovlapLowerInd = max(bisect_left(self.lower_cuts,
-                                            aRange.lowerCut)-1,0)
+                                            aRange.lowerCut) - 1, 0)
             ovlapUpperInd = bisect_left(self.lower_cuts, aRange.upperCut)
             # Create queue of indices marked for removal
             removeRanges = deque()
@@ -341,6 +358,7 @@ class RangeMap(object):
             # Add any pairs that need to be added
             while len(addRanges) > 0:
                 self.put(addRanges.pop(), addItems.pop())
+
     def whichOverlaps(self, val):
         """ Returns which of the Ranges overlap with a single value or
         Range object
@@ -364,15 +382,15 @@ class RangeMap(object):
         # to set
         overlap_set = set()
         if isinstance(val, Range):
-            lower_ind = bisect_left(self.lower_cuts, val.lowerCut)-1
+            lower_ind = bisect_left(self.lower_cuts, val.lowerCut) - 1
             upper_ind = bisect_left(self.lower_cuts, val.upperCut)
-            for i in range(lower_ind,upper_ind):
+            for i in range(lower_ind, upper_ind):
                 if val.isConnected(self.ranges[i]):
                     if not self.ranges[i].intersection(val).isEmpty():
                         overlap_set.add(self.ranges[i])
             return overlap_set
         else:
-            lower_ind = bisect_left(self.lower_cuts,val)-1
+            lower_ind = bisect_left(self.lower_cuts, val) - 1
             if self.ranges[lower_ind].contains(val):
                 overlap_set.add(self.ranges[lower_ind])
             return overlap_set

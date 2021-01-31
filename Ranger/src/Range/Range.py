@@ -1,11 +1,13 @@
 from Ranger.src.Range.Cut import Cut
 
+
 class Range(object):
     """
     Class used to represent a range along some 1-D domain. The range
     is represented by 2 cutpoints can can be unbounded by specifying an
     aboveAll or belowAll Cut.
     """
+
     def __init__(self, lowerCut, upperCut):
         """ Instantiates a Range
 
@@ -21,37 +23,42 @@ class Range(object):
         ValueError
             If bound(s) are not Cut objects or lower > upper
         """
-        if not all(map(lambda x: isinstance(x, Cut), (lowerCut,upperCut))):
+        if not all(map(lambda x: isinstance(x, Cut), (lowerCut, upperCut))):
             raise ValueError("Bounds must be Cut objects")
         elif lowerCut > upperCut:
             raise ValueError("Lower bound cannot be greater than upper bound")
         self.lowerCut = lowerCut
         self.upperCut = upperCut
+
     def __repr__(self):
         try:
             return_str = '[' if self.isLowerBoundClosed() else '('
         except TypeError:
             return_str = '('
         return_str += (str(self.lowerCut.point) if not self.lowerCut.belowAll \
-          else '')
+                           else '')
         return_str += ' , '
         return_str += (str(self.upperCut.point) if not self.upperCut.aboveAll \
-          else '')
+                           else '')
         try:
             return_str += ']' if self.isUpperBoundClosed() else ')'
         except TypeError:
             return_str += ')'
         return return_str
+
     def __hash__(self):
-        return (hash(self.lowerCut)*31 + hash(self.upperCut))
+        return (hash(self.lowerCut) * 31 + hash(self.upperCut))
+
     def __eq__(self, other):
         if not isinstance(other, Range):
             return False
         else:
             return ((self.lowerCut == other.lowerCut) and \
                     (self.upperCut == other.upperCut))
+
     def __ne__(self, other):
         return not self.__eq__(other)
+
     def contains(self, val):
         """ Returns true if the range contains the value
 
@@ -71,6 +78,7 @@ class Range(object):
         """
         return (self.lowerCut < val and \
                 self.upperCut > val)
+
     def containsAll(self, vals):
         """ Returns True if the range contains all values in some
         iterable
@@ -93,7 +101,8 @@ class Range(object):
             if not self.contains(val):
                 return False
         return True
-    def getDistanceFromPoint(self, val, distFunc = lambda x1, x2: abs(x1-x2)):
+
+    def getDistanceFromPoint(self, val, distFunc=lambda x1, x2: abs(x1 - x2)):
         """ Returns the minimum distance of a Range from a Point, returning 0
         if there is an overlap.
 
@@ -126,7 +135,8 @@ class Range(object):
         else:
             return min(distFunc(self.lowerCut.point, val),
                        distFunc(self.upperCut.point, val))
-    def getDistanceFromRange(self, other, distFunc = lambda x1,x2: abs(x1-x2)):
+
+    def getDistanceFromRange(self, other, distFunc=lambda x1, x2: abs(x1 - x2)):
         """ Returns the minimum distance of a Range from another Range, returning
         0 if there is any overlap
 
@@ -160,6 +170,7 @@ class Range(object):
         else:
             return min(distFunc(self.lowerCut.point, other.upperCut.point),
                        distFunc(other.lowerCut.point, self.upperCut.point))
+
     def hasLowerBound(self):
         """ Returns True if the range has a lower endpoint (not unbounded
         at the lower end)
@@ -169,6 +180,7 @@ class Range(object):
         True if the range has a lower endpoint
         """
         return (not self.lowerCut.belowAll)
+
     def hasUpperBound(self):
         """ Returns True if the range has an upper endpoint (not unbounded
         at the upper end)
@@ -178,6 +190,7 @@ class Range(object):
         True if the range has an upper endpoint
         """
         return (not self.upperCut.aboveAll)
+
     def lowerEndpoint(self):
         """ Returns the lower endpoint of the range if it exists. Otherwise
         raises a TypeError
@@ -195,6 +208,7 @@ class Range(object):
             raise TypeError("Range unbounded below")
         else:
             return self.lowerCut.point
+
     def upperEndpoint(self):
         """ Returns the upper endpoint of the range if it exists. Otherwise
         raises a TypeError
@@ -212,6 +226,7 @@ class Range(object):
             raise TypeError("Range unbounded above")
         else:
             return self.upperCut.point
+
     def isLowerBoundClosed(self):
         """ Returns whether the lower bound is closed (if there is a
         lower bound)
@@ -229,6 +244,7 @@ class Range(object):
             raise TypeError("Range unbounded below")
         else:
             return self.lowerCut.below
+
     def isUpperBoundClosed(self):
         """ Returns whether the upper bound is closed (if there is an
         upper bound)
@@ -246,6 +262,7 @@ class Range(object):
             raise TypeError("Range unbounded above")
         else:
             return (not self.upperCut.below)
+
     def isEmpty(self):
         """ Returns True if the range is of form [v, v) or (v, v]
 
@@ -255,6 +272,7 @@ class Range(object):
         True if the range is of the form [v,v) or (v,v]
         """
         return self.lowerCut == self.upperCut
+
     def encloses(self, other):
         """ Returns True if the bounds of the other range do not extend
         outside the bounds of this range
@@ -284,7 +302,8 @@ class Range(object):
         if not isinstance(other, Range):
             raise ValueError("Range required")
         return ((self.lowerCut <= other.lowerCut) and \
-            (self.upperCut >= other.upperCut))
+                (self.upperCut >= other.upperCut))
+
     def isConnected(self, other):
         """ Returns True if there is a (possibly empty) range that is
         enclosed by both this range and other
@@ -314,6 +333,7 @@ class Range(object):
             raise ValueError("Range required")
         return ((self.lowerCut <= other.upperCut) and \
                 (other.lowerCut <= self.upperCut))
+
     def intersection(self, other):
         """ Returns the maximal range enclosed by both this range and the
         other range, if such a range exists
@@ -339,17 +359,18 @@ class Range(object):
         if not isinstance(other, Range):
             raise ValueError("Range required")
         if ((self.lowerCut >= other.lowerCut) and \
-            (self.upperCut <= other.upperCut)):
+                (self.upperCut <= other.upperCut)):
             return Range(self.lowerCut, self.upperCut)
         elif ((self.lowerCut <= other.lowerCut) and \
               (self.upperCut >= other.upperCut)):
             return Range(other.lowerCut, other.upperCut)
         else:
             newLower = self.lowerCut if (self.lowerCut >= other.lowerCut) else \
-                                         other.lowerCut
+                other.lowerCut
             newUpper = self.upperCut if (self.upperCut <= other.upperCut) else \
-                                         other.upperCut
+                other.upperCut
             return Range(newLower, newUpper)
+
     def span(self, other):
         """ Returns the minimal range that encloses both this range and
         the other. Note that if the input ranges are not connected, the span can
@@ -373,7 +394,7 @@ class Range(object):
         The minimal range enclosing both with and the other range
         """
         if ((self.lowerCut <= other.lowerCut) and \
-            (self.upperCut >= other.upperCut)):
+                (self.upperCut >= other.upperCut)):
             return Range(self.lowerCut, self.upperCut)
         elif ((self.lowerCut >= other.lowerCut) and \
               (self.upperCut <= other.upperCut)):
@@ -384,29 +405,33 @@ class Range(object):
             newUpper = self.upperCut if (self.upperCut >= other.upperCut) else \
                 other.upperCut
             return Range(newLower, newUpper)
+
     ##################
     # Static methods #
     ##################
     @staticmethod
     def _validate_cutpoints(*pts):
         if not all(map(lambda x: (hasattr(x, "__lt__") and \
-                hasattr(x, "__gt__")) or hasattr(x,'__cmp__'), pts)):
+                                  hasattr(x, "__gt__")) or hasattr(x, '__cmp__'), pts)):
             raise ValueError("Cutpoint type(s) not comparable")
         if len(pts) == 2:
-            if not (issubclass(type(pts[0]),type(pts[1])) or \
-              issubclass(type(pts[1]),type(pts[0]))):
+            if not (issubclass(type(pts[0]), type(pts[1])) or \
+                    issubclass(type(pts[1]), type(pts[0]))):
                 raise ValueError("Cutpoints are not compatible")
         return True
+
     @staticmethod
     def _get_type(*pts):
-        if len(pts) == 1: return type(pts[0])
+        if len(pts) == 1:
+            return type(pts[0])
         elif len(pts) == 2:
-            if issubclass(type(pts[0]),type(pts[1])):
+            if issubclass(type(pts[0]), type(pts[1])):
                 return type(pts[1])
-            elif issubclass(type(pts[1]),type(pts[0])):
+            elif issubclass(type(pts[1]), type(pts[0])):
                 return type(pts[0])
             else:
                 raise ValueError("Cutpoints are not compatible")
+
     @staticmethod
     def closed(lower, upper):
         """ Creates a range including the endpoints (i.e. [lower, upper])
@@ -429,9 +454,10 @@ class Range(object):
         """
         # Ensure cutpoints are of compatible, appropriate types
         Range._validate_cutpoints(lower, upper)
-        theType = Range._get_type(lower,upper)
+        theType = Range._get_type(lower, upper)
         return Range(Cut.belowValue(lower, theType=theType),
                      Cut.aboveValue(upper, theType=theType))
+
     @staticmethod
     def closedOpen(lower, upper):
         """ Creates a range including the lower endpoint (i.e. [lower, upper))
@@ -454,9 +480,10 @@ class Range(object):
         """
         # Ensure cutpoints are of compatible, appropriate types
         Range._validate_cutpoints(lower, upper)
-        theType = Range._get_type(lower,upper)
+        theType = Range._get_type(lower, upper)
         return Range(Cut.belowValue(lower, theType=theType),
                      Cut.belowValue(upper, theType=theType))
+
     @staticmethod
     def openClosed(lower, upper):
         """ Creates a range including the upper (i.e. (lower, upper])
@@ -479,9 +506,10 @@ class Range(object):
         """
         # Ensure cutpoints are of compatible, appropriate types
         Range._validate_cutpoints(lower, upper)
-        theType = Range._get_type(lower,upper)
+        theType = Range._get_type(lower, upper)
         return Range(Cut.aboveValue(lower, theType=theType),
                      Cut.aboveValue(upper, theType=theType))
+
     @staticmethod
     def open(lower, upper):
         """ Creates a range excluding the endpoints (i.e. (lower, upper))
@@ -505,11 +533,12 @@ class Range(object):
         """
         # Ensure cutpoints are of compatible, appropriate types
         Range._validate_cutpoints(lower, upper)
-        theType = Range._get_type(lower,upper)
+        theType = Range._get_type(lower, upper)
         if lower == upper:
-            raise TypeError("Range of type (v,v) is not valid")        
+            raise TypeError("Range of type (v,v) is not valid")
         return Range(Cut.aboveValue(lower, theType=theType),
                      Cut.belowValue(upper, theType=theType))
+
     @staticmethod
     def lessThan(val):
         """ Makes range including all values less than some value
@@ -533,6 +562,7 @@ class Range(object):
         theType = Range._get_type(val)
         return Range(Cut.belowAll(theType=theType),
                      Cut.belowValue(val, theType=theType))
+
     @staticmethod
     def atMost(val):
         """ Makes range including all values less than or equal to
@@ -556,6 +586,7 @@ class Range(object):
         theType = Range._get_type(val)
         return Range(Cut.belowAll(theType=theType),
                      Cut.aboveValue(val, theType=theType))
+
     @staticmethod
     def greaterThan(val):
         """ Makes range including all values greater than
@@ -577,8 +608,9 @@ class Range(object):
         """
         Range._validate_cutpoints(val)
         theType = Range._get_type(val)
-        return Range(Cut.aboveValue(val,theType=theType),
+        return Range(Cut.aboveValue(val, theType=theType),
                      Cut.aboveAll(theType=theType))
+
     @staticmethod
     def atLeast(val):
         """ Makes range including all values greater than or equal to

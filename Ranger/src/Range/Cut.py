@@ -1,11 +1,11 @@
-
 class Cut(object):
     """
     Class used to represent a cutpoint in a range, such that any range can
     be represented by 2 Cuts
     """
-    def __init__(self, theType, aboveAll=False, belowAll=False, point = None,
-                 below = False):
+
+    def __init__(self, theType, aboveAll=False, belowAll=False, point=None,
+                 below=False):
         """ Instantiates a cut point
 
         Parameters
@@ -53,19 +53,22 @@ class Cut(object):
             else:
                 self.point = point
                 self.below = below
+
     def _validate_query_pt(self, pt):
         if not isinstance(pt, self.theType):
             raise ValueError("Type is not compatible with cutpoint type")
         return True
+
     def __hash__(self):
         if self.belowAll:
-            return hash(self.theType)*31-hash(None)
+            return hash(self.theType) * 31 - hash(None)
         elif self.aboveAll:
-            return hash(self.theType)*31+hash(None)
+            return hash(self.theType) * 31 + hash(None)
         elif self.below:
-            return hash(self.theType)*31-hash(self.point)
+            return hash(self.theType) * 31 - hash(self.point)
         else:
-            return hash(self.theType)*31+hash(self.point)
+            return hash(self.theType) * 31 + hash(self.point)
+
     def __repr__(self):
         if self.belowAll:
             return "Cut(Below all %s)" % str(self.theType)
@@ -75,12 +78,15 @@ class Cut(object):
             return "Cut(Below %s)" % str(self.point)
         else:
             return "Cut(Above %s)" % str(self.point)
+
     def __cmp__(self, other):
         if self == other:
             return 0
         elif self < other:
             return -1
-        elif self > other: return 1
+        elif self > other:
+            return 1
+
     def __eq__(self, other):
         """ Returns whether Cuts are at EXACT same place """
         if not isinstance(other, Cut):
@@ -93,8 +99,10 @@ class Cut(object):
             return ((self.point == other.point) and (self.below == other.below))
         else:
             return False
+
     def __ne__(self, other):
         return not self.__eq__(other)
+
     def __lt__(self, other):
         """ Returns whether cutpoint is less than a specified value """
         if isinstance(other, Cut):
@@ -110,12 +118,13 @@ class Cut(object):
                 if self.point < other.point:
                     return True
                 elif self.point == other.point and self.below and \
-                  not other.below:
+                        not other.below:
                     return True
                 else:
                     return False
         else:
             return self.isLessThan(other)
+
     def __gt__(self, other):
         """ Returns whether cutpoint is greater than a specified value """
         if isinstance(other, Cut):
@@ -131,16 +140,19 @@ class Cut(object):
                 if self.point > other.point:
                     return True
                 elif self.point == other.point and not self.below and \
-                  other.below:
+                        other.below:
                     return True
                 else:
                     return False
         else:
             return self.isGreaterThan(other)
+
     def __ge__(self, other):
         return (self.__eq__(other) or self.__gt__(other))
+
     def __le__(self, other):
         return (self.__eq__(other) or self.__lt__(other))
+
     def isLessThan(self, val):
         """ Returns whether the cutpoint is less than a specified value
 
@@ -159,7 +171,8 @@ class Cut(object):
         True if the cutpoint is strictly less than the specified value
         """
         self._validate_query_pt(val)
-        if self.belowAll: return True
+        if self.belowAll:
+            return True
         elif self.aboveAll:
             return False
         elif self.point < val:
@@ -168,6 +181,7 @@ class Cut(object):
             return True
         else:
             return False
+
     def isGreaterThan(self, val):
         """ Returns whether the cutpoint is greater than a specified value
 
@@ -186,16 +200,19 @@ class Cut(object):
         True if the cutpoint is strictly greater than the specified value
         """
         self._validate_query_pt(val)
-        if self.aboveAll: return True
-        elif self.belowAll: return False
+        if self.aboveAll:
+            return True
+        elif self.belowAll:
+            return False
         elif self.point > val:
             return True
         elif self.point == val and not self.below:
             return True
         else:
             return False
+
     @staticmethod
-    def belowValue(val, theType = None):
+    def belowValue(val, theType=None):
         """ Create a cut point, where everything below some value is
         included
 
@@ -214,6 +231,7 @@ class Cut(object):
             return Cut(type(val), point=val, below=True)
         else:
             return Cut(theType, point=val, below=True)
+
     @staticmethod
     def belowAll(theType):
         """ Create a cut point outside the lower end of the domain
@@ -228,6 +246,7 @@ class Cut(object):
         The cut object
         """
         return Cut(theType, belowAll=True)
+
     @staticmethod
     def aboveValue(val, theType=None):
         """ Create a cut point, where everything above some value is
@@ -249,6 +268,7 @@ class Cut(object):
             return Cut(type(val), point=val, below=False)
         else:
             return Cut(theType, point=val, below=False)
+
     @staticmethod
     def aboveAll(theType):
         """ Create a cut point outside the upper end of the domain
@@ -263,5 +283,3 @@ class Cut(object):
         The cut object
         """
         return Cut(theType, aboveAll=True)
-
-    

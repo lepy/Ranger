@@ -2,13 +2,15 @@ from bisect import bisect_left
 from collections import deque
 from Ranger.src.Range.Range import Range
 
+
 class RangeSet(object):
     """ Class used to represent a set of non-overlapping ranges of the
     same type. If a range is added that is connected to another range
     already in the set, those ranges are merged. Otherwise, it is added as
     a new range in the set
     """
-    def __init__(self, ranges = None):
+
+    def __init__(self, ranges=None):
         """ Instantiates the RangeSet
 
         Parameters
@@ -24,27 +26,33 @@ class RangeSet(object):
         if ranges is not None:
             for aRange in ranges:
                 self.add(aRange)
+
     def __repr__(self):
         if len(self) < 6:
             return "RangeSet(%s)" % ", ".join(map(str, self.ranges))
         else:
             return "RangeSet(%s, ..., %s)" % (", ".join(map(str, self.ranges[:2])),
                                               ", ".join(map(str, self.ranges[-2:])))
+
     def __len__(self):
         return len(self.ranges)
+
     def __iter__(self):
         return iter(self.ranges)
+
     def __eq__(self, other):
         if not isinstance(other, RangeSet):
             return False
         elif len(self) != len(other):
             return False
         else:
-            for r1,r2 in zip(self.ranges, other.ranges):
+            for r1, r2 in zip(self.ranges, other.ranges):
                 if r1 != r2: return False
             return True
+
     def __ne__(self, other):
         return not self.__eq__(other)
+
     def add(self, aRange):
         """ Adds a range to the range set. If this range is not connected
         to any current ranges, it will place the new range on its own. If
@@ -85,42 +93,42 @@ class RangeSet(object):
             self.lower_cuts.append(aRange.lowerCut)
             self.upper_cuts.append(aRange.upperCut)
         elif len(self) == lower_ind:
-            if not aRange.isConnected(self.ranges[max(lower_ind-1,0)]):
+            if not aRange.isConnected(self.ranges[max(lower_ind - 1, 0)]):
                 # Add on its own if not connected to previous and last
-                self.ranges.insert(lower_ind,aRange)
-                self.lower_cuts.insert(lower_ind,aRange.lowerCut)
-                self.upper_cuts.insert(lower_ind,aRange.upperCut)
+                self.ranges.insert(lower_ind, aRange)
+                self.lower_cuts.insert(lower_ind, aRange.lowerCut)
+                self.upper_cuts.insert(lower_ind, aRange.upperCut)
             else:
                 # If connected with the range below, replace with new range
                 newLowerCut = min(aRange.lowerCut,
-                                  self.lower_cuts[max(lower_ind-1,0)])
+                                  self.lower_cuts[max(lower_ind - 1, 0)])
                 newUpperCut = max(aRange.upperCut,
-                                  self.upper_cuts[max(lower_ind-1,0)])
+                                  self.upper_cuts[max(lower_ind - 1, 0)])
                 newRange = Range(newLowerCut, newUpperCut)
                 self.ranges[-1] = newRange
                 self.lower_cuts[-1] = newLowerCut
                 self.upper_cuts[-1] = newUpperCut
-        elif not any((aRange.isConnected(self.ranges[max(lower_ind-1,0)]),
+        elif not any((aRange.isConnected(self.ranges[max(lower_ind - 1, 0)]),
                       aRange.isConnected(self.ranges[lower_ind]))):
             # Add on its own if not connected
-            self.ranges.insert(lower_ind,aRange)
-            self.lower_cuts.insert(lower_ind,aRange.lowerCut)
-            self.upper_cuts.insert(lower_ind,aRange.upperCut)
-        elif aRange.isConnected(self.ranges[max(lower_ind-1,0)]):
+            self.ranges.insert(lower_ind, aRange)
+            self.lower_cuts.insert(lower_ind, aRange.lowerCut)
+            self.upper_cuts.insert(lower_ind, aRange.upperCut)
+        elif aRange.isConnected(self.ranges[max(lower_ind - 1, 0)]):
             # If connected with range below
-            newLowerCut = min(self.lower_cuts[max(lower_ind-1,0)],
+            newLowerCut = min(self.lower_cuts[max(lower_ind - 1, 0)],
                               aRange.lowerCut)
             newUpperCut = max(aRange.upperCut,
-                              self.upper_cuts[max(lower_ind-1,0)])
+                              self.upper_cuts[max(lower_ind - 1, 0)])
             removeCount = 1
             if len(self) == (lower_ind):
                 # If hitting the last range, take the maximum uppercut
-                newUpperCut = max(newUpperCut, self.upper_cuts[max(lower_ind-1,0)])
+                newUpperCut = max(newUpperCut, self.upper_cuts[max(lower_ind - 1, 0)])
             else:
                 # If not hitting the last range, go find the upper cut
-                for i in range(max(1,lower_ind), len(self)):
+                for i in range(max(1, lower_ind), len(self)):
                     if aRange.isConnected(self.ranges[i]):
-                        newUpperCut = max(newUpperCut,self.upper_cuts[i])
+                        newUpperCut = max(newUpperCut, self.upper_cuts[i])
                         removeCount += 1
                     else:
                         break
@@ -128,13 +136,13 @@ class RangeSet(object):
             newRange = Range(newLowerCut, newUpperCut)
             # Get rid of all overlapping ranges
             for i in range(removeCount):
-                self.ranges.pop(max(lower_ind-1,0))
-                self.lower_cuts.pop(max(lower_ind-1,0))
-                self.upper_cuts.pop(max(lower_ind-1,0))
+                self.ranges.pop(max(lower_ind - 1, 0))
+                self.lower_cuts.pop(max(lower_ind - 1, 0))
+                self.upper_cuts.pop(max(lower_ind - 1, 0))
             # Add the new range
-            self.ranges.insert(max(lower_ind-1,0),newRange)
-            self.lower_cuts.insert(max(lower_ind-1,0),newRange.lowerCut)
-            self.upper_cuts.insert(max(lower_ind-1,0),newRange.upperCut)
+            self.ranges.insert(max(lower_ind - 1, 0), newRange)
+            self.lower_cuts.insert(max(lower_ind - 1, 0), newRange.lowerCut)
+            self.upper_cuts.insert(max(lower_ind - 1, 0), newRange.upperCut)
         elif aRange.isConnected(self.ranges[lower_ind]):
             # If connected with the range above
             newLowerCut = min(aRange.lowerCut, self.lower_cuts[lower_ind])
@@ -184,16 +192,17 @@ class RangeSet(object):
         # Get the index+1 of the highest lower cut <= to the value or its
         # lower cutpoint and check if the value contained
         if isinstance(val, Range):
-            lower_ind = max(bisect_left(self.lower_cuts, val.lowerCut),0)
+            lower_ind = max(bisect_left(self.lower_cuts, val.lowerCut), 0)
             if lower_ind >= len(self.lower_cuts):
-                return self.ranges[lower_ind-1].encloses(val)
+                return self.ranges[lower_ind - 1].encloses(val)
             elif val.lowerCut != self.lower_cuts[lower_ind]:
-                return self.ranges[lower_ind-1].encloses(val)
+                return self.ranges[lower_ind - 1].encloses(val)
             else:
                 return self.ranges[lower_ind].encloses(val)
         else:
-            lower_ind = max(bisect_left(self.lower_cuts, val)-1,0)
+            lower_ind = max(bisect_left(self.lower_cuts, val) - 1, 0)
             return self.ranges[lower_ind].contains(val)
+
     def difference(self, otherSet):
         """ Creates a new RangeSet in which all elements in another RangeSet
         are taken out of this RangeSet
@@ -222,7 +231,7 @@ class RangeSet(object):
             if otherSet.overlaps(addRange):
                 # Determine where overlap occurs
                 otherLowerInd = max(bisect_left(otherSet.lower_cuts,
-                                            addRange.lowerCut)-1,0)
+                                                addRange.lowerCut) - 1, 0)
                 otherUpperInd = bisect_left(otherSet.lower_cuts,
                                             addRange.upperCut)
                 newLowerCut = addRange.lowerCut
@@ -261,6 +270,7 @@ class RangeSet(object):
             else:
                 newSet.add(addRange)
         return newSet
+
     def intersection(self, otherSet):
         """ Creates a new RangeSet that is the intersection of this and
         another RangeSet
@@ -289,7 +299,7 @@ class RangeSet(object):
             if otherSet.overlaps(addRange):
                 # Determine where overlap occurs
                 otherLowerInd = max(bisect_left(otherSet.lower_cuts,
-                                                addRange.lowerCut)-1,0)
+                                                addRange.lowerCut) - 1, 0)
                 otherUpperInd = bisect_left(otherSet.lower_cuts,
                                             addRange.upperCut)
                 for i in range(otherLowerInd, otherUpperInd):
@@ -302,6 +312,7 @@ class RangeSet(object):
                     except ValueError:
                         continue
         return newSet
+
     def overlaps(self, val):
         """ Returns true if any of the ranges at least partially overlap
         the given value, which can be a single value or a Range object
@@ -323,16 +334,17 @@ class RangeSet(object):
         # Get the index+1 of the highest lower cut <= to the value or its
         # lower cutpoint and check if the value overlaps
         if isinstance(val, Range):
-            lower_ind = bisect_left(self.lower_cuts, val.lowerCut)-1
+            lower_ind = bisect_left(self.lower_cuts, val.lowerCut) - 1
             upper_ind = bisect_left(self.lower_cuts, val.upperCut)
-            for i in range(lower_ind,upper_ind):
+            for i in range(lower_ind, upper_ind):
                 if val.isConnected(self.ranges[i]):
                     if not self.ranges[i].intersection(val).isEmpty():
                         return True
             return False
         else:
-            lower_ind = bisect_left(self.lower_cuts,val)-1
+            lower_ind = bisect_left(self.lower_cuts, val) - 1
             return self.ranges[lower_ind].contains(val)
+
     def remove(self, aRange):
         """ Removes a range from the range set. 
 
@@ -367,7 +379,7 @@ class RangeSet(object):
         else:
             # There's some overlap, so deal with that
             # Determine where overlap occurs
-            ovlapLowerInd = max(bisect_left(self.lower_cuts, aRange.lowerCut)-1,0)
+            ovlapLowerInd = max(bisect_left(self.lower_cuts, aRange.lowerCut) - 1, 0)
             ovlapUpperInd = bisect_left(self.lower_cuts, aRange.upperCut)
             # Create queue of indices marked for removal
             removeRanges = deque()
@@ -410,6 +422,7 @@ class RangeSet(object):
             # Add any ranges that need to be added
             while len(addRanges) > 0:
                 self.add(addRanges.pop())
+
     def union(self, otherSet):
         """ Creates a new RangeSet that is the union of this set and
         another RangeSet object
@@ -432,7 +445,8 @@ class RangeSet(object):
         """
         if not isinstance(otherSet, RangeSet):
             raise TypeError("otherSet is not a RangeSet")
-        return RangeSet(set(self.ranges+otherSet.ranges))
+        return RangeSet(set(self.ranges + otherSet.ranges))
+
     def whichOverlaps(self, val):
         """ Returns which of the Ranges overlap with a single value or
         Range object
@@ -456,15 +470,15 @@ class RangeSet(object):
         # to set
         overlap_set = set()
         if isinstance(val, Range):
-            lower_ind = bisect_left(self.lower_cuts, val.lowerCut)-1
+            lower_ind = bisect_left(self.lower_cuts, val.lowerCut) - 1
             upper_ind = bisect_left(self.lower_cuts, val.upperCut)
-            for i in range(lower_ind,upper_ind):
+            for i in range(lower_ind, upper_ind):
                 if val.isConnected(self.ranges[i]):
                     if not self.ranges[i].intersection(val).isEmpty():
                         overlap_set.add(self.ranges[i])
             return overlap_set
         else:
-            lower_ind = bisect_left(self.lower_cuts,val)-1
+            lower_ind = bisect_left(self.lower_cuts, val) - 1
             if self.ranges[lower_ind].contains(val):
                 overlap_set.add(self.ranges[lower_ind])
             return overlap_set

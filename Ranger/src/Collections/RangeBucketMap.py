@@ -4,12 +4,14 @@ from Ranger.src.Collections.RangeMap import RangeMap
 from Ranger.src.Range.Range import Range
 from Ranger.src.Range.Cut import Cut
 
+
 class RangeBucketMap(RangeMap):
     """ Class used to represent a mapping of disjoint ranges to sets of items. Ranges
     do not coalesce. However, if a new Range is added over an existing Range, items
     belonging to the existing Range are retained in that Range
     """
-    def __init__(self, rangeDict = None):
+
+    def __init__(self, rangeDict=None):
         """ Instantiates a RangeBucketMap
 
         Parameters
@@ -19,7 +21,8 @@ class RangeBucketMap(RangeMap):
         """
         self.recurseAdd = False
         super(RangeBucketMap, self).__init__(rangeDict)
-    def iteritems(self, start = None, end = None):
+
+    def iteritems(self, start=None, end=None):
         """ Iterates over pairs of (Range, value)
 
         Parameters
@@ -43,7 +46,7 @@ class RangeBucketMap(RangeMap):
             end = Cut.aboveValue(end)
         bounding_range = Range(start, end)
         # Get the bounding indices
-        ovlapLowerInd = max(bisect_left(self.lower_cuts, start)-1,0)
+        ovlapLowerInd = max(bisect_left(self.lower_cuts, start) - 1, 0)
         ovlapUpperInd = bisect_left(self.lower_cuts, end)
         # Create queue of values that need to be generated
         yield_vals = deque()
@@ -52,11 +55,11 @@ class RangeBucketMap(RangeMap):
         for i in range(ovlapLowerInd, ovlapUpperInd):
             # Check if anything can be released from the queue
             while len(yield_vals) > 0:
-                if vals_inds_dict[yield_vals[0]][-1] < i-1:
+                if vals_inds_dict[yield_vals[0]][-1] < i - 1:
                     # Yield the full range, value. Remove value from queue
                     val = yield_vals.popleft()
-                    yield Range(max(self.lower_cuts[vals_inds_dict[val][0]],start),
-                                min(self.upper_cuts[vals_inds_dict[val][-1]],end)), val
+                    yield Range(max(self.lower_cuts[vals_inds_dict[val][0]], start),
+                                min(self.upper_cuts[vals_inds_dict[val][-1]], end)), val
                     # Remove value from dict
                     del vals_inds_dict[val]
                 else:
@@ -78,11 +81,11 @@ class RangeBucketMap(RangeMap):
         while len(yield_vals) > 0:
             # Yield the full range, value. Remove value from queue
             val = yield_vals.popleft()
-            yield Range(max(self.lower_cuts[vals_inds_dict[val][0]],start),
-                        min(self.upper_cuts[vals_inds_dict[val][-1]],end)), val
+            yield Range(max(self.lower_cuts[vals_inds_dict[val][0]], start),
+                        min(self.upper_cuts[vals_inds_dict[val][-1]], end)), val
             # Remove value from dict
             del vals_inds_dict[val]
-                
+
     def get(self, key):
         """ Get the item(s) corresponding to a given key. The key can be a
         Range or a single value that is within a Range
@@ -109,7 +112,7 @@ class RangeBucketMap(RangeMap):
             # If this is a single value
             returnSet = set()
             # Get the bounding indices
-            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lowerCut)-1,0)
+            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lowerCut) - 1, 0)
             ovlapUpperInd = bisect_left(self.lower_cuts, key.upperCut)
             for i in range(ovlapLowerInd, ovlapUpperInd):
                 try:
@@ -127,9 +130,10 @@ class RangeBucketMap(RangeMap):
         else:
             # If this is a single value
             # Get the index of the range containing the value
-            lower_ind = max(bisect_left(self.lower_cuts, key)-1,0)
+            lower_ind = max(bisect_left(self.lower_cuts, key) - 1, 0)
             # Return the item at that value
-            return self.items[lower_ind]  
+            return self.items[lower_ind]
+
     def put(self, key, val):
         """ Creates a mapping from a Range to a value, adding to
         any existing values over that Range
@@ -167,7 +171,7 @@ class RangeBucketMap(RangeMap):
             return
         else:
             # If this range has some overlap with existing ranges
-            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lowerCut)-1,0)
+            ovlapLowerInd = max(bisect_left(self.lower_cuts, key.lowerCut) - 1, 0)
             ovlapUpperInd = bisect_left(self.lower_cuts, key.upperCut)
             # Create queue ranges to add
             addRanges = deque()
@@ -230,7 +234,7 @@ class RangeBucketMap(RangeMap):
                             # Define original part to be middle
                             self.lower_cuts[i] = intersect.lowerCut
                             self.upper_cuts[i] = intersect.upperCut
-                            self.ranges[i] = Range(intersect.lowerCut,intersect.upperCut)
+                            self.ranges[i] = Range(intersect.lowerCut, intersect.upperCut)
                             self.items[i].add(val)
                             # Change the next lower cut
                             nextLowerCut = intersect.upperCut
@@ -245,8 +249,9 @@ class RangeBucketMap(RangeMap):
             # should not overlap with any other ranges
             self.recurseAdd = True
             while len(addRanges) > 0:
-                self.put(addRanges.pop(),addItems.pop())
+                self.put(addRanges.pop(), addItems.pop())
             self.recurseAdd = False
+
     def remove(self, aRange):
         """ Removes a range and its value(s) from the range set
 
@@ -282,7 +287,7 @@ class RangeBucketMap(RangeMap):
             # There's some overlap, so deal with that
             # Determine where overlap occurs
             ovlapLowerInd = max(bisect_left(self.lower_cuts,
-                                            aRange.lowerCut)-1,0)
+                                            aRange.lowerCut) - 1, 0)
             ovlapUpperInd = bisect_left(self.lower_cuts, aRange.upperCut)
             # Create queue of indices marked for removal
             removeRanges = deque()
@@ -334,5 +339,5 @@ class RangeBucketMap(RangeMap):
             # Add any pairs that need to be added
             self.recurseAdd = True
             while len(addRanges) > 0:
-                self.put(addRanges.pop(), addItems.pop())        
+                self.put(addRanges.pop(), addItems.pop())
             self.recurseAdd = False
